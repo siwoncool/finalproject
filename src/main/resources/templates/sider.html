@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <!--- basic page needs
+    ================================================== -->
+    <meta charset="utf-8">
+    <title>Typerite</title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- mobile specific metas
+    ================================================== -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- CSS
+    ================================================== -->
+    <link rel="stylesheet" href="css/header.css">
+
+    <!-- script
+    ================================================== -->
+    <script src="js/modernizr.js"></script>
+
+    <!-- favicons
+    ================================================== -->
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="manifest" href="site.webmanifest">
+</head>
+<style>
+    h1, h2, h3, h4, h5, h6, span, p, a, label, input, textarea, button{
+        font-family: 'Gowun Dodum', sans-serif !important;
+        font-size: medium !important;
+    }
+
+
+</style>
+<body>
+
+
+<!-- site header
+        ================================================== -->
+<header class="s-header">
+
+    <div class="header__top">
+        <div class="header__logo">
+            <a class="site-logo" href="index">
+                <img src="images/logo.svg" alt="Homepage">
+            </a>
+        </div>
+
+        <div class="header__search">
+
+            <form role="search" method="get" class="header__search-form" action="UnifiedSearch">
+                <label>
+                    <span class="hide-content">Search for:</span>
+                    <input type="search" class="search-field" placeholder="Type Keywords" value="" name="q" title="Search for:"
+                           autocomplete="off" onkeyup="profileResearching(this.value)">
+                </label>
+                <input type="submit" class="header__search-submit" value="Search">
+            </form>
+
+            <div id="profileResearchArea">
+
+            </div>
+
+            <a href="#0" title="Close Search" class="header__search-close">Close</a>
+
+        </div>  <!-- end header__search -->
+        <script>
+            function profileResearching(input) {
+                if (input.indexOf("@") == 0 && input.length > 1) {
+                    $.ajax({
+                        type: "POST",
+                        url: "profileResearching",
+                        data: {
+                            "search": input
+                        },
+                        async: false,
+                        dataType: "json",
+                        success: function (result) {
+                            //alert(result);
+                            //console.log(result);
+                            let output = "<table>";
+                            for (let i in result){
+                                output+="<tr>";
+                                output+="<td><a href=\"PRO001?user="+result[i].memCode+"\"><img src='fish/img/memProfileImg/"+result[i].memProfileName+"' width='50px;'></a></td>";
+                                output+="<td><a href=\"PRO001?user="+result[i].memCode+"\">"+result[i].memName+"</a></td>";
+                                output+="</tr>";
+                            }
+                            output +="</table>";
+
+                            $("#profileResearchArea").html(output);
+
+                        },
+                        error: function () {
+                            alert("프로필 자동검색 통신실패");
+                        }
+                    });
+                } else {
+                    //console.log("프로필 검색 아님");
+                }
+            }
+
+            function chating(){
+                if([[${session.login eq null}]]){
+                    alert("로그인 후 사용가능합니다.");
+                }else {
+                    window.open("chat","myWindow","width=500, height=430");
+                }
+            }
+        </script>
+
+
+
+        <!-- toggles -->
+        <a href="#0" class="header__search-trigger"></a>
+        <a href="#0" class="header__menu-toggle"><span>Menu</span></a>
+
+    </div> <!-- end header__top -->
+
+    <nav class="header__nav-wrap">
+
+        <ul class="header__nav">
+            <th:block th:if="${session.login eq null}">
+                <li><a href="MemJoinLogin" title="">로그인 & 회원가입</a></li>
+            </th:block>
+
+            <th:block th:if="${session.login ne null}">
+                <span style="color: whitesmoke">로그인한 닉네임 : [[${session.login.memName}]]</span>
+                <li><a href="MEM007">로그아웃</a></li>
+                <li><a th:href="@{PRO001(user = ${session.login.memCode})}">프로필</a></li>
+                <li><a href="aiChating">ai채팅</a></li>
+                <li><a href= 'javascript:void(0);' onclick="chating();" >채팅하기</a></li>
+                <li><a href="FollowingUpLoadBoard">팔로잉피드</a></li>
+                <li><a href="RecommandBoard">추천게시글</a></li>
+                <li><a href="DRA001">게시글작성</a></li>
+            </th:block>
+
+            <li class="has-children">
+                <a href="#0" title="">관리자</a>
+                <ul class="sub-menu">
+                    <li><a href="MEM015" style="font-family: 'Gowun Dodum', sans-serif !important;
+        font-size: small !important;">공지 메일 보내기</a></li>
+                    <li><a href="MEM011" style="font-family: 'Gowun Dodum', sans-serif !important;
+        font-size: small !important;">회원 리스트</a></li>
+                    <li><a href="MEM010" style="font-family: 'Gowun Dodum', sans-serif !important;
+        font-size: small !important;">회원 신고목록</a></li>
+                    <li><a href="MEM021" style="font-family: 'Gowun Dodum', sans-serif !important;
+        font-size: small !important;">직원 관리</a></li>
+                    <li><a href="Pay_ASaleInfo" style="font-family: 'Gowun Dodum', sans-serif !important;
+        font-size: small !important;">관리자 매출정보</a></li>
+                </ul>
+            </li>
+
+            <li class="has-children">
+            <a href="#0" title="">통합 게시판</a>
+            <ul class="sub-menu">
+            <li><a href="WOR3" title="">워크스페이스</a></li>
+            <li><a href="DRA008?category=all" title="">게시글</a></li>
+            </ul>
+            </li>
+
+            <li class="has-children">
+                <a href="#0" title="">카테고리</a>
+                <ul class="sub-menu">
+                    <li><a href="MUS003?category=음악" style="font-family: 'Gowun Dodum', sans-serif !important;
+        font-size: small !important;">음악</a></li>
+                    <li><a href="DRA007?category=패션" style="font-family: 'Gowun Dodum', sans-serif !important;
+        font-size: small !important;">패션</a></li>
+                    <li><a href="DRA007?category=DIY" style="font-family: 'Gowun Dodum', sans-serif !important;
+        font-size: small !important;">DIY</a></li>
+                    <li><a href="DRA007?category=그림" style="font-family: 'Gowun Dodum', sans-serif !important;
+        font-size: small !important;">그림</a></li>
+                    <li><a href="DRA007?category=문학" style="font-family: 'Gowun Dodum', sans-serif !important;
+        font-size: small !important;">문학</a></li>
+                </ul>
+            </li>
+
+            <li class="has-children">
+                <a href="#0" title="">포인트 & 멤버쉽</a>
+                <ul class="sub-menu">
+                    <li><a href="Pay_pay" style="font-family: 'Gowun Dodum', sans-serif !important;
+        font-size: small !important;">포인트 구매</a></li>
+                    <li><a href="Pay_Membership" style="font-family: 'Gowun Dodum', sans-serif !important;
+        font-size: small !important;">멤버쉽 구매</a></li>
+                    <li><a href="Boa_View" style="font-family: 'Gowun Dodum', sans-serif !important;
+        font-size: small !important;">포인트 반환</a></li>
+                </ul>
+            </li></li>
+            <li class="has-children">
+                <a href="#0" title="">매출 관리</a>
+                <ul class="sub-menu">
+                    <li><a href="Boa_View" style="font-family: 'Gowun Dodum', sans-serif !important;
+        font-size: small !important;">상품 관리</a></li>
+                    <li><a href="Boa_View" style="font-family: 'Gowun Dodum', sans-serif !important;
+        font-size: small !important;">매출 정보</a></li>
+                </ul>
+            </li>
+
+        </ul> <!-- end header__nav -->
+
+    </nav> <!-- end header__nav-wrap -->
+
+
+
+</header> <!-- end s-header -->
+
+</body>
+
+
+
+<script src="js/jquery-3.2.1.min.js"></script>
+<script src="js/plugins.js"></script>
+<script src="js/main.js"></script>
+</html>

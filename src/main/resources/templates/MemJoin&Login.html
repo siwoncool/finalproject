@@ -1,0 +1,398 @@
+
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="author" content="GISEOP">
+    <meta name="date" content="">
+    <meta name="description" content="">
+    <link rel="stylesheet" href="/css/Login.css">
+    <link rel="shortcut icon" href="/favicon/favicon.ico" type="image/x-icon">
+    <title></title>
+</head>
+<!-- Stylesheets -->
+<link rel="stylesheet" href="css/music/bootstrap.min.css"/>
+<link rel="stylesheet" href="css/music/font-awesome.min.css"/>
+<link rel="stylesheet" href="css/music/owl.carousel.min.css"/>
+<link rel="stylesheet" href="css/music/slicknav.min.css"/>
+
+<!-- Main Stylesheets -->
+<link rel="stylesheet" href="css/music/style.css"/>
+<style th:replace="mouse.html :: style"></style>
+<style>
+    body {
+        background: #102131;
+    }
+
+    #container {
+        position: absolute;
+        width: 200px;
+        height: 200px;
+        margin: auto;
+        transform: rotate(45deg);
+        top: 0; bottom: 0; left: 0; right: 0;
+    }
+</style>
+<body>
+<div id="preloder">
+        <canvas id="container" width="200" height="200"></canvas>
+</div>
+
+
+
+<div class="cotn_principal">
+    <div class="cont_centrar">
+
+        <div class="cont_login">
+            <div class="cont_info_log_sign_up">
+                <div class="col_md_login">
+                    <div class="cont_ba_opcitiy">
+
+                        <h2>로그인</h2>
+                        <button class="btn_login" onclick="cambiar_login()">LOGIN</button>
+                    </div>
+                </div>
+                <div class="col_md_sign_up">
+                    <div class="cont_ba_opcitiy">
+                        <h2>회원가입</h2>
+                        <button class="btn_sign_up" onclick="cambiar_sign_up()">SIGN UP</button>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="cont_back_info">
+                <div class="cont_img_back_grey">
+                    <img src="https://search.pstatic.net/common/?src=http%3A%2F%2Fshop1.phinf.naver.net%2F20221104_188%2F16675528541084bMH1_JPEG%2F68688699800295436_790944058.jpeg&type=sc960_832" alt="" />
+                </div>
+
+            </div>
+            <div class="cont_forms" >
+                <div class="cont_img_back_">
+                    <img src="https://search.pstatic.net/common/?src=http%3A%2F%2Fshop1.phinf.naver.net%2F20221104_188%2F16675528541084bMH1_JPEG%2F68688699800295436_790944058.jpeg&type=sc960_832" alt="" />
+                </div>
+                <form action="MEM006" method="post">
+                <div class="cont_form_login">
+                    <a href="#" onclick="ocultar_login_sign_up()" ><i class="material-icons">&#xE5C4;</i></a>
+                    <h2>로그인</h2>
+                    <input type="hidden" name="memIp" id="memIp" />
+                    <input type="email" name="memId" placeholder="아이디(이메일)"/>
+                    <input type="password" name="memPw" placeholder="비밀번호"/>
+                    <!--<button class="btn_login" onclick="cambiar_login()">LOGIN</button>-->
+                    <button type="submit" class="btn_login" onclick="cambiar_login()" style="margin-top: 20px">로그인</button>
+                    <br/><br/><br/>
+                    <a href="Mem_Join">Forgot Password?</a>&nbsp;
+                    <a href="index">이전 페이지</a>
+                </div>
+                </form>
+
+                <form action="MEM004" method="post" onsubmit="return checkConfirm();">
+                <div class="cont_form_sign_up">
+
+                    <h2>회원가입</h2>
+                    <input type="email" name="memId" id="memId" onkeyup="idCheck()" placeholder="아이디(이메일)"/>
+                    <br>
+                    <span id="checkId" style="color: #006600">아이디를 입력해 주세요</span>
+
+                    <!--비밀번호-->
+
+                    <input type="password" name="memPw" id="memPw" onkeyup="pwRegexp()" placeholder="비밀번호"/>
+                    <br/>
+                    <!--비밀번호 정규식이 맞는지 결과.-->
+                    <span id="pwResult1" style="color: #006600">비밀번호를 입력해 주세요</span>
+
+                    <input type="password" id="checkPw" onkeyup="pwCheck()" placeholder="비밀번호 확인"/>
+                     <!--비밀번호 일치하는지 확인-->
+                    <br/>
+                    <span id="pwResult2" style="color: #006600">비밀번호를 재입력해 주세요</span>
+                    <!--닉네임-->
+
+                    <input type="text" name="memName" Id="memName" onkeyup="nameCheck()" placeholder="닉네임"/>
+                    <br>
+                    <span id="checkName"style="color: #006600">닉네임을 입력해 주세요</span>
+
+                    <button type="submit" class="btn_sign_up" onclick="cambiar_sign_up()" style="margin-top: 20px">회원가입</button>
+                    <!--<button class="btn_sign_up" onclick="cambiar_sign_up()">SIGN UP</button>-->
+
+                </div>
+                </form>
+
+            </div>
+
+
+        </div>
+    </div>
+</div>
+</body>
+<script src="https://code.jquery.com/jquery-3.6.3.js" integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM="
+        crossorigin="anonymous"></script>
+<script src="js/loading.js"></script>
+<!--====== Javascripts & Jquery ======-->
+<script src="js/music/jquery-3.2.1.min.js"></script>
+<script src="js/music/bootstrap.min.js"></script>
+<script src="js/music/jquery.slicknav.min.js"></script>
+<script src="js/music/owl.carousel.min.js"></script>
+<script src="js/music/mixitup.min.js"></script>
+<script src="js/music/main.js"></script>
+
+<!-- Audio Player and Initialization -->
+<script src="js/music/jquery.jplayer.min.js"></script>
+<script src="js/music/jplayerInit.js"></script>
+
+<!-- jQuery -->
+<script src="js/jquery.min.js"></script>
+<!-- jQuery Easing -->
+<script src="js/jquery.easing.1.3.js"></script>
+<!-- Bootstrap -->
+<script src="js/bootstrap.min.js"></script>
+<!-- Waypoints -->
+<script src="js/jquery.waypoints.min.js"></script>
+<!-- Flexslider -->
+<script src="js/jquery.flexslider-min.js"></script>
+<!-- Sticky Kit -->
+<script src="js/sticky-kit.min.js"></script>
+<!-- Owl carousel -->
+<script src="js/owl.carousel.min.js"></script>
+<!-- Counters -->
+<script src="js/jquery.countTo.js"></script>
+
+
+<!-- MAIN JS -->
+<script src="js/main.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.3.js" integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM="
+        crossorigin="anonymous"></script>
+<script>
+    let message = "";
+
+    // 아이디 중복체크 및 적합성 체크
+    function idCheck() {
+        let memId = document.getElementById("memId").value;
+        let spc = memId.search(/\s/);
+
+        let check = document.getElementById("checkId");
+        let conf = false;
+
+        if (memId == null || memId == "") {
+            message = "아이디를 입력해주세요";
+        } else if (spc != -1) {
+            message = "아이디에 공백을 제거해 주세요";
+        } else {
+            $.ajax({
+                type: "POST",
+                url: "MEM002",
+                data: {
+                    "memId": memId
+                },
+                async: false,
+                dataType: "text",
+                success: function (result) {
+                    if (result == "OK") {
+                        // 사용할 수 있는 아이디일 경우 실행
+                        check.innerHTML = "사용가능한 아이디";
+                        check.style.color = "#0000ff";
+                        conf = true;
+                        console.log("확인1 : " + conf);
+                    } else {
+                        // 사용할 수 없는 아이디일 경우 실행
+                        check.innerHTML = "이미 사용중인 아이디";
+                        check.style.color = "#ff0000";
+                        message = "이미 사용중인 아이디 입니다.";
+                    }
+                },
+                error: function () {
+                    alert("MEM002함수 통신실패!");
+                }
+
+            });
+        }
+        return conf;
+    }
+
+    // 닉네임 중복 및 적합성 체크
+    function nameCheck() {
+        let memName = document.getElementById("memName").value;
+        let spc = memName.search(/\s/);
+        let check = document.getElementById("checkName");
+        let conf = false;
+
+        if (memName == null || memName == "") {
+            message = "닉네임을 입력해주세요";
+        } else if (spc != -1) {
+            message = "닉네임에 공백을 제거해 주세요";
+        } else {
+            $.ajax({
+                type: "POST",
+                url: "MEM003",
+                data: {
+                    "memName": memName
+                },
+                async: false,
+                dataType: "text",
+                success: function (result) {
+                    if (result == "OK") {
+                        // 사용할 수 있는 아이디일 경우 실행
+                        check.innerHTML = "사용가능한 닉네임";
+                        check.style.color = "#0000ff";
+                        conf = true;
+                        console.log("확인1 : " + conf);
+                    } else {
+                        // 사용할 수 없는 아이디일 경우 실행
+                        check.innerHTML = "이미 사용중인 닉네임";
+                        check.style.color = "#ff0000";
+                        message = "이미 사용중인 닉네임 입니다.";
+                    }
+                },
+                error: function () {
+                    alert("MEM003함수 통신실패!");
+                }
+
+            });
+
+        }
+        return conf;
+    }
+
+
+    // 가입버튼
+    function checkConfirm() {
+        let pass = false;
+        if (idCheck() && pwRegexp() && pwCheck() && nameCheck()) {
+
+            pass = true;
+
+        } else if (!nameCheck()) {
+
+            alert(message);
+
+        } else if (!idCheck()) {
+
+            alert(message);
+
+        } else {
+
+            alert('비밀번호를 확인하세요.');
+
+        }
+        return pass;
+    }
+
+    // 비밀번호 정규식
+    function pwRegexp() {
+        let memPw = document.getElementById("memPw").value;
+        let pwResult1 = document.getElementById("pwResult1");
+
+        // search는 찾은 갯수를 나타내며 찾지못하면 -1으로 표시된다.
+        let num = memPw.search(/[0-9]/);
+        let eng = memPw.search(/[a-z]/);
+        let spe = memPw.search(/[`~!@#$%^&*|\\\'\":;\/?]/);
+        // 특수문자 : `~!@#$%^&*|\\\'\":;\/?
+        let spc = memPw.search(/\s/);
+        if (memPw.length < 8 || memPw.length > 16) {
+            pwResult1.style.color = "#ff0000";
+            pwResult1.innerHTML = "비밀번호는 8자리에서 16자리 이내로 입력해주세요.";
+            return false;
+
+        } else if (spc != -1) {
+            pwResult1.style.color = "#ff0000";
+            pwResult1.innerHTML = "비밀번호는 공백없이 입력해주세요.";
+            return false;
+
+        } else if (num < 0 || eng < 0 || spe < 0) {
+            pwResult1.style.color = "#ff0000";
+            pwResult1.innerHTML = "영문,숫자,특수문자를 포함시켜주세요";
+            return false;
+
+        } else {
+            pwResult1.style.color = "#0000ff";
+            pwResult1.innerHTML = "사용가능한 비밀번호 입니다.";
+            return true;
+        }
+
+
+    }
+
+    // 비밀번호가 일치하는가?
+    function pwCheck() {
+        let memPw = document.getElementById("memPw").value;
+        let checkPw = document.getElementById("checkPw").value;
+        let pwResult2 = document.getElementById("pwResult2");
+
+        if (memPw == checkPw) {
+            pwResult2.style.color = "#0000ff";
+            pwResult2.innerHTML = "비밀번호가 일치합니다.";
+            return true;
+        } else {
+            pwResult2.style.color = "#ff0000";
+            pwResult2.innerHTML = "비밀번호가 일치하지 않습니다."
+            return false;
+        }
+    }
+</script>
+
+<!--아이피 주소 가져오기 구글 api 활용-->
+<script type="text/javascript" src="//code.jquery.com/jquery.min.js"></script>
+
+<script type="text/javascript">
+
+    $(function() {
+
+        $.getJSON("https://api.ipify.org?format=jsonp&callback=?",
+
+            function(json) {
+                // document.write(json.ip);
+                $('#memIp').val(json.ip);
+            }
+
+        );
+
+    });
+
+</script>
+<script>
+    function cambiar_login() {
+        document.querySelector('.cont_forms').className = "cont_forms cont_forms_active_login";
+        document.querySelector('.cont_form_login').style.display = "block";
+        document.querySelector('.cont_form_sign_up').style.opacity = "0";
+
+        setTimeout(function(){  document.querySelector('.cont_form_login').style.opacity = "1"; },400);
+
+        setTimeout(function(){
+            document.querySelector('.cont_form_sign_up').style.display = "none";
+        },200);
+    }
+
+    function cambiar_sign_up(at) {
+        document.querySelector('.cont_forms').className = "cont_forms cont_forms_active_sign_up";
+        document.querySelector('.cont_form_sign_up').style.display = "block";
+        document.querySelector('.cont_form_login').style.opacity = "0";
+
+        setTimeout(function(){  document.querySelector('.cont_form_sign_up').style.opacity = "1";
+        },100);
+
+        setTimeout(function(){   document.querySelector('.cont_form_login').style.display = "none";
+        },400);
+
+
+    }
+
+
+
+    function ocultar_login_sign_up() {
+
+        document.querySelector('.cont_forms').className = "cont_forms";
+        document.querySelector('.cont_form_sign_up').style.opacity = "0";
+        document.querySelector('.cont_form_login').style.opacity = "0";
+
+        setTimeout(function(){
+            document.querySelector('.cont_form_sign_up').style.display = "none";
+            document.querySelector('.cont_form_login').style.display = "none";
+        },500);
+
+    }
+
+
+</script>
+</html>

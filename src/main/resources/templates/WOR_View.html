@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>워크스페이스</title>
+</head>
+
+<body>
+
+<h1>워크스페이스</h1>
+<img th:src="@{junho/workSpaceImg/{img}(img=${workspace.workImgName})}" width="100px" height="120px">
+
+<br/>
+    <!--수정시 보낼 value-->
+    <input type="hidden" th:value="${workspace.workCode}" name="workCode">
+
+
+<label>닉네임</label>
+<label>[[${workspace.memName}]]</label>
+
+<br/>
+    <label>카테고리</label>
+    <label>[[${workspace.category}]]</label>
+    <br/>
+    <label>서브카테고리</label>
+    <label>[[${workspace.subCategory}]]</label>
+
+<br/>
+<label>회원등급</label>
+<label>[[${workspace.memGrade}]]</label>
+<br/>
+<label>좋아요</label>
+<label>[[${workspace.likeNum}]]</label>
+<br/>
+<label>댓글</label>
+<label>[[${workspace.comentNum}]]</label>
+<br/>
+<label>조회</label>
+<label>[[${workspace.HitNum}]]</label>
+<br/>
+<label>게시글</label>
+<label>[[${workspace.BoardNum}]]</label>
+<br/>
+<label>워크스페이스 제목</label>
+<label>[[${workspace.workTitle}]]</label>
+<br/>
+<label>워크스페이스 설명</label>
+<label>[[${workspace.workIntro}]]</label>
+<br/>
+<label>태그</label>
+<label>[[${workspace.workTag}]]</label>
+<span id="innerTable"></span>
+<br/>
+
+<!--<input type="button" onclick="asd()" value="좋아요">-->
+
+<!--<block th:if="${session.login ne null && session.login.memCode eq workspace.memCode}">-->
+    <button th:onclick="|location.href='@{WOR5(workCode=${workspace.workCode})}'|">수정</button>
+    <button th:onclick="|location.href='@{WOR8(workCode=${workspace.workCode})}'|">삭제</button>
+<!--</block>-->
+
+
+<!--여기부터 게시물.-->
+
+<h2>게시물 리스트</h2>
+<span th:each="list : ${boardList}">
+    <block>
+        <button th:onclick="|location.href='@{WOR7(boaCode=${list.boaCode}, workCode = ${workspace.workCode})}'|">x</button>
+    </block>
+    <label><a th:attr="onclick=|checkLiterature('${list.boaCode}','${list.category}')|" ><img th:src="@{/PSW/bestimg/{boaBestImg}(boaBestImg=${list.boaBestImg})}" alt=""></a></label>
+    <label >게시글 시퀀스 [[${list.boaCode}]]</label><br/>
+    <label >카테고리 [[${list.category}]]</label><br/>
+    <label >서브 카테고리 [[${list.subCategory}]]</label><br/>
+    <label >회원 이름 [[${list.memName}]]</label><br/>
+    <label >회원 등급 [[${list.memGrade}]]</label><br/>
+    <label >회원 결제 등급 [[${list.memPayGrade}]]</label><br/>
+    <label >조회수 [[${list.boaHit}]]</label><br/>
+    <label >좋아요 수 [[${list.likeNum}]]</label><br/>
+    <label >댓글 수 [[${list.likeNum}]]</label><br/>
+</span>
+
+
+
+
+<block th:if="${session.login ne null}">
+    <input type="hidden" id="loginId" th:value="${session.login.memCode}">
+</block>
+
+</body>
+<script src="https://code.jquery.com/jquery-3.6.3.js" integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM=" crossorigin="anonymous"></script>
+<script>
+
+    /*태그 리스트 불러오기*/
+
+    /* value값에 넣기 위한 리스트*/
+    let tags = "[[${workspace.workTag}]]"
+    tags =tags.split(",");
+    console.log(tags)
+    let arr = [];
+
+    console.log(tags.length);
+    for(j = 0; j<tags.length; j++){
+
+        tagShow(tags[j].replace("#",""));
+    }
+
+    /*태그 누를 시 입력*/
+    function tagShow(tag){
+        /* html에 보여주기 위한 내용*/
+        let output = "";
+
+        /*태그에 입력한 값 리스트에 넣기*/
+        arr.push("#"+tag);
+        console.log("리스트 값"+arr);
+        console.log(tag);
+
+        /*리스트 html 출력 칸*/
+        for(i=0; i<arr.length; i++){
+            output += ""
+            output += "<div id='test"+i+"'><a href='UnifiedSearch?q="+arr[i].replace('#','%23')+"'>"+arr[i];
+            output += "</a></div>"
+
+        }
+        /*html 삽입명령문*/
+        document.getElementById("innerTable").innerHTML = output;
+
+        /*inputWork();*/
+    }
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /*/!* a태그 누를 시 발동*!/
+    function asd(asd){
+        location.href="UnifiedSearch?q="+asd;
+    }*/
+
+    // 문학 게시글 페이
+
+    let memCode = $('#loginId').val();
+
+    function checkLiterature(boaCode, category){
+        console.log(boaCode);
+        console.log(category);
+        console.log(memCode);
+
+        if(category=="문학") {
+            $.ajax({
+                type: 'post',
+                url: 'ajaxPayAndCheck',
+                data: {
+                    "boaCode"   : boaCode,
+                    "memCode" : memCode
+                },
+                dataType: "text",
+                success:
+                    function (result) {
+                        if (result != null) {
+                            // result 0이면 꽁자, 가격이 나오면 이면 이미 결제해야함
+                            // 사용할 수 있는 아이디
+                            console.log("result!=null")
+                            console.log("가격은?" + result);
+                            if(result ==0){
+                                checkLoginNow();
+                            }else if(result==1){
+                                location.href="DRA004?boaCode="+boaCode;
+                            }else{
+                                checkIdAndPay(result);
+                            }
+                        } else {
+                            // 사용할 수 없는 아이디
+                            console.log("result==null")
+                        }
+                    },
+                error: function () {
+                    alert('ajaxPayAndCheck 실패');
+                }
+            })
+        }else{
+            location.href="DRA004?boaCode="+boaCode;
+        }
+        function asd(){
+            console.log("이게 되나 시발???"+boaCode);
+        }
+        function checkIdAndPay(price){
+            if (!confirm("이 게시글의 가격은 "+price+"입니다 읽으시겠습니까?.")) {
+                /*비동의*/
+                alert("취소(아니오)를 누르셨습니다.");
+            } else {
+                /*동의*/
+                checkLoginNow();
+            }
+        }
+
+        function checkLoginNow() {
+            console.log("checkLoginNow")
+
+            console.log(memCode);
+            if (memCode == null) {
+                console.log('아이디 없음');
+                if (!confirm("결제 진행을 위해 로그인 하셔야 합니다 로그인하시겠습니까?")) {
+                    /*비동의*/
+                    alert("취소되었습니다.");
+                } else {
+                    /*동의*/
+                    location.href='join'
+                }
+            }else{/*결제 진행*/
+                console.log('아이디 있음');
+                /*결제 진행  ajax*/
+                $.ajax({
+                    type: 'post',
+                    url: 'ajaxLitPay',
+                    data: {
+                        "boaCode"   : boaCode,
+                        "memCode" : memCode
+                    },
+                    dataType: "text",
+                    success:
+                        function (result) {
+                            if(result==1){
+                                /*적절히 성공할시 */
+                                console.log('결제성공');
+                                location.href="DRA004?boaCode="+boaCode;
+                            }else{
+                                /*돈이 없거나 */
+                                /*등등*/
+                                alert('포인트가 부족합니다');
+                                location.href='Pay_PayMembership';
+                                console.log('결제실패')
+                            }
+                        },
+                    error: function () {
+                        alert('ajaxLitPay 실패');
+                    }
+                })
+            }
+        }
+
+    }
+
+</script>
+
+</html>

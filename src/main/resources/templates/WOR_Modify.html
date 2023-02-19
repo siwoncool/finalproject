@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>회원가입</title>
+</head>
+<style>
+    .fishUl {
+        list-style: none;
+    }
+
+    .fishLi {
+        float: left;
+        margin-left: 50px;
+    }
+
+    .fishDiv {
+        min-width: 550px;
+        border: 1px solid black;
+        text-align: center;
+        height: 720px;
+    }
+
+    .fishDiv2 {
+        border: 1px solid black;
+        width: 90%;
+        height: 200px;
+        margin: auto;
+        overflow: scroll;
+    }
+
+    .fishTextarea {
+        width: 90%;
+        height: 400px;
+        border: none;
+        resize: none;
+        border: 1px solid black;
+    }
+
+    .fishButton {
+        width: 50%;
+        height: 50px;
+        margin-bottom: 25px;
+        margin-top: 25px;
+    }
+
+    .fishStrong {
+        font-size: 20px;
+    }
+    .fishTable{
+        margin: auto;
+    }
+</style>
+
+<body>
+<h1>수정</h1>
+
+<form action="WOR6" method="post" enctype="multipart/form-data">
+    <input type="hidden" th:value="${workspace.workMemCode}" name="workMemCode">
+    <input type="hidden" th:value="${workspace.workCode}" name="workCode">
+    <input type="hidden" th:value="${workspace.category}" id="category">
+
+    <label>작성자</label>
+    <input type="text" th:value="${workspace.memName}" disabled>
+    <br/>
+
+    <input type="button" value="서브카테고리변경" onclick="show()">
+    <span id="exCategory">[[${workspace.category}]] | [[${workspace.subCategory}]]
+    <label>카테고리</label>
+    <label>[[${workspace.category}]]</label>
+        <label>서브카테고리</label>
+        <label>[[${workspace.subCategory}]]</label>
+        <input type="hidden" name="workCateCode" th:value="${workspace.workCateCode}">
+    </span>
+    <br/>
+
+    <span id="showCategory">
+    </span>
+
+    <br/>
+    <label>서브카테고리</label>
+    <div id="SUBCATEGORY">
+    </div>
+
+    <br/>
+    <label>워크스페이스 제목</label>
+    <input type="text" name="workTitle" th:value="${workspace.workTitle}">
+
+    <br/>
+    <label>워크스페이스 설명</label>
+    <textarea name="workIntro">[[${workspace.workIntro}]]</textarea>
+
+    <br/>
+    <label>태그</label>
+    <input type="button" onclick="tagUp()" value="+" id="buttonDelete">
+    <div id="tagInsert"></div>
+    <span id="innerTable"></span>
+
+
+    <input type="hidden" id="work" name="workTag" th:value="${workspace.workTag}">
+
+    <br/>
+    <label>대표사진</label>
+    <input type='file' onchange="readURL(this);" name="workImg"/>
+    <br/>
+    <!--이미지를 넣었을 경우 전에 이미지를 보여주되 삭제하기 위한 방식-->
+    <span id="exImg">
+    <img th:src="@{/junho/workSpaceImg/{workImgName}(workImgName=${workspace.workImgName})}" width="300px" height="200px">
+    </span>
+    <input type="hidden" th:value="${workspace.workImgName}" name="workImgName">
+    <img id="blah" src="#" alt="default.png" width="300px" height="200px"/>
+
+
+    <!--워크스페이스 안 게시글 추가 -->
+    <ul class="fishUl">
+        <li class="fishLi">
+            <div class="fishDiv">
+                <h1>워크스페이스안에 게시글 추가</h1>
+                <div>
+                    <!--<strong>분류별로 보내기</strong>
+                    <input type="checkbox" id="rangeCheck" onchange="check1();">-->
+                    <div id="searchArea">
+                        <br/>
+                        <strong>검색 :</strong>
+                        <!--분류에 따라서 가져오기-->
+                        <select onchange="changeDevide(this.value)">
+                            <option value="boaTitle">게시글 이름</option>
+                            <option value="boaTag">태그</option>
+
+                        </select>
+                        <!--<select onchange="changeCategory(this.value)">
+                            <option value="all">모두</option>
+                            <option value="그림">그림</option>
+                            <option value="문학">문학</option>
+                            <option value="음악">음악</option>
+                            &lt;!&ndash;전체 게시글 추가시 여기서 더 넣으면 됌&ndash;&gt;
+                        </select>-->
+                        <input type="text" onkeyup="changSearch(this.value)"/>
+                        <h4>검색결과</h4>
+                        <div class="fishDiv2">
+                            <table id="searchInsert" class="fishTable">
+
+                            </table>
+                        </div>
+                        <h4>선택한 유저</h4>
+                        <div class="fishDiv2">
+                            <table id="checkUser">
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </li>
+    </ul>
+
+    <input type="hidden" id="boaCodeList" name="boaCodeList">
+    <br/>
+
+    <br/>
+    <input type="submit" value="수정">
+    <input type="button" onclick="location.href='index'" value="취소">
+
+</form>
+
+
+</body>
+
+<script src="https://code.jquery.com/jquery-3.6.3.js" integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM=" crossorigin="anonymous"></script>
+<script>
+    let category = $("#category").val();
+    console.log("asdasdada"+category);
+
+    /*카테고리 선택시 발생하는 함수*/
+    function choose(cate){
+        console.log(cate);
+
+        category = cate;
+        ajaxsearchAll();
+
+        /*서브 카테고리 가져와 열기*/
+        $.ajax({
+            type: 'post',
+            url : 'category',
+            data:{
+                "cate" : cate
+            },
+            dataType: "json",
+            success:
+                function(subCategoryList){
+                    console.log("연결");
+                    /*선택 리스트 출력*/
+                    selectChoose(subCategoryList);
+                },
+            error:function (){
+                alert('category 연결 실패')
+            }
+        })
+
+    }
+    // 데이터베이스 안에 있는 서브 카테고리 값 가져오기
+    function selectChoose(subCategoryList){
+        console.log("selectChoose도착")
+
+        let output = "";
+
+        output += "<select name='subCategory' id='subCategory'>";
+        for(let i in subCategoryList){
+            output += "<option>"+subCategoryList[i].subCategory+"</option>"
+        }
+        output +="</select>";
+
+        document.getElementById("SUBCATEGORY").innerHTML = output;
+
+    }
+
+    /*태그 바로 생성*/
+    /* 새로운 태크 입력창과 버튼 추가 html*/
+    $("#tagInsert").html("<input type='text' id='tag'" +
+        "onkeyup='characterCheck(this)' onkeydown='characterCheck(this)'>" +
+
+        "<input type='button' onclick='tagWrite()' value='태그추가'>");
+
+    /*id값으로 내용 삭제*/
+    $("#buttonDelete").remove();
+
+    /* value값에 넣기 위한 리스트*/
+    let tags = "[[${workspace.workTag}]]"
+    tags =tags.split(",");
+    console.log(tags)
+    let arr = [];
+
+    console.log(tags.length);
+    for(j = 0; j<tags.length; j++){
+
+        tagShow(tags[j].replace("#",""));
+    }
+
+    function tagShow(tag){
+        /* html에 보여주기 위한 내용*/
+        let output = "";
+
+        /*태그에 입력한 값 리스트에 넣기*/
+        arr.push("#"+tag);
+        console.log("리스트 값"+arr);
+        console.log(tag);
+
+        /*리스트 html 출력 칸*/
+        for(i=0; i<arr.length; i++){
+            output += ""
+            output += "<div id='test"+i+"'>"+arr[i];
+            output += "<input type='button' onclick=\"tagDelete('"+arr[i]+"')\" value='삭제'>";
+            output += "</div>"
+
+        }
+        /*html 삽입명령문*/
+        document.getElementById("innerTable").innerHTML = output;
+
+        inputWork();
+    }
+
+    /*넣은 태그를 보여주는 js*/
+    function tagWrite(){
+        /*태그에 입력한 값.*/
+        let tag =  $("#tag").val();
+
+
+        /*태그를 나열하는 함수*/
+        tagShow(tag);
+
+    }
+    /*태그 삭제와 그 자리에 리스트 삭제*/
+    function tagDelete(arr2){
+        console.log(arr2);
+
+        console.log(arr.indexOf(arr2));
+
+        /*리스트의 값의 번호를 구함*/
+        let num = arr.indexOf(arr2);
+        console.log(arr);
+        arr.splice(num,1);
+        /*지정된 span 삭제*/
+        $("#test"+num).remove();
+
+        /* 다시 출력 문 */
+        let output = "";
+        /*삭제 한 후 오류 제거를 위한 재출력*/
+        for(i=0; i<arr.length; i++){
+            output += ""
+            output += "<div id='test"+i+"'>"+arr[i];
+            output += "<input type='button' onclick=\"tagDelete('"+arr[i]+"')\" value='삭제'>";
+            output += "</div>"
+
+        }
+        /*html 삽입명령문*/
+        document.getElementById("innerTable").innerHTML = output;
+
+        inputWork();
+    }
+
+    // 특수문자 입력 방지
+    function characterCheck(obj){
+        var regExp = /[ \{\}\[\]\/?.,;:|\)*~`!^\-_+┼<>@\#$%&\'\"\\\(\=]/gi;
+        // 허용할 특수문자는 여기서 삭제하면 됨
+        // 지금은 띄어쓰기도 특수문자 처리됨 참고하셈
+        if( regExp.test(obj.value) ){
+            alert("특수문자는 입력하실수 없습니다.");
+            obj.value = obj.value.substring( 0 , obj.value.length - 1 ); // 입력한 특수문자 한자리 지움
+        }
+    }
+
+    /*input값에 태그 리스트 다 넣기, tag의 input 값 초기화*/
+    function inputWork(){
+        /*input값 초기화*/
+        let input = document.getElementById("tag");
+        input.value = null;
+
+        /*리스트 값 value에 넣기*/
+        let work = arr;
+        $("#work").val(work);
+    }
+
+
+
+    /*이미지 읽기*/
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            /*사진 업로드시 바로 삭제*/
+            $("#exImg").remove();
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#blah').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    /*카테고리 변경시 사용*/
+    function show(){
+        $("#exCategory").remove();
+
+        /*프론트 엔드씨들 전에 했던거 그대로 html()안에 있어서 WOR_Write에서 꾸민거 그대로 복붙하세요 */
+        $("#showCategory").html(/*"        <label>카테고리</label>\n" +
+            "    <select name=\"category\" id=\"category\" onchange=\"choose(this.value)\">\n" +
+            "        <option selected>자유</option>\n" +
+            "        <option>그림</option>\n" +
+            "        <option>음악</option>\n" +
+            "        <option>문학</option>\n" +
+            "        <option>DIY</option>\n" +
+            "        <option>패션</option>\n" +
+            "    </select>"*/"카테고리 : "+category);
+
+        choose(category)
+    }
+
+    /////////////////////////////////////////////////////////////////////////////
+
+    // 검색할때
+    let memCode = [[${session.login.memCode}]];
+    /*DDAN 변경해야함*/
+
+    // 분류
+    let devide = "boaTitle";
+    // 카테고리
+    /*let category = "all";*/
+    // 검색
+    let searchName = "";
+
+    // 검색으로 보낼때, 보낼 아이디들
+    let IdArr = new Array();
+
+    // 처음 1회 자동으로 조회
+    ajaxsearchAll();
+
+    // 검색- 분류
+    function changeDevide(name) {
+        devide = name;
+        ajaxsearchAll();
+    }
+
+    // 검색 - 카테고리
+    function changeCategory(name) {
+        category = name;
+        ajaxsearchAll();
+    }
+
+    // 검색 - search
+    function changSearch(name) {
+        searchName = name;
+        ajaxsearchAll();
+    }
+
+    // 불러온 값 출력
+    function searchInner(result) {
+        let output = "                            <tr>\n" +
+            "                                <th>게시글 번호</th>\n" +
+            "                                <th>제목</th>\n" +
+            "                                <th>카테고리</th>\n" +
+            "                                <th>태그</th>\n" +
+            "                                <th>날짜</th>\n" +
+            "                                <th>체크</th>\n" +
+            "                            </tr>";
+
+        for (let i in result) {
+            if (IdArr.filter((e) => {
+                return e.boaCode == result[i].boaCode
+            }).length < 1) {
+                output += "<tr>";
+                output += "<td>" + result[i].boaCode+ "</td>";
+                output += "<td>" + result[i].boaTitle+ "</td>";
+                output += "<td>" + result[i].category + "</td>";
+                output += "<td>" + result[i].boaTag + "</td>";
+                output += "<td>" + result[i].boaDate + "</td>";
+                output += "<td> <input type=\"checkbox\"  onchange=\"check2('"+ result[i].boaTitle + "','"+result[i].category+"','"+result[i].boaTag+"','"+result[i].boaDate+"','"+result[i].boaCode+"');\"></td>";
+                output += "</tr>";
+
+            }
+        }
+
+
+        $('#searchInsert').html(output);
+    }
+
+    // 검색에서 체크할 시
+    function check2(boaTitle,category,boaTag,boaDate,boaCode) {
+
+        IdArr.push({boaTitle : boaTitle, category : category, boaTag : boaTag, boaDate: boaDate, boaCode : boaCode});
+        console.log(IdArr);
+
+        checkList();
+        ajaxsearchAll();
+    }
+    // 검색체크한 사람들 보여주는 함수
+    function checkList() {
+        let output = "                            <tr>\n" +
+            "                                <th>게시글 번호</th>\n" +
+            "                                <th>제목</th>\n" +
+            "                                <th>카테고리</th>\n" +
+            "                                <th>태그</th>\n" +
+            "                                <th>날짜</th>\n" +
+            "                                <th>체크</th>\n" +
+            "                            </tr>";
+        for (let i in IdArr) {
+            output += "<tr>";
+            output += "<td>" + IdArr[i].boaCode + "</td>";
+            output += "<td>" + IdArr[i].boaTitle + "</td>";
+            output += "<td>" + IdArr[i].category + "</td>";
+            output += "<td>" + IdArr[i].boaTag + "</td>";
+            output += "<td>" + IdArr[i].boaDate + "</td>";
+            output += "<td> <input type=\"checkbox\" checked  onchange=\"check3('" + IdArr[i].boaCode + "');\"></td>";
+            output += "</tr>";
+        }
+
+        /*리스트 값을 input에 넣기*/
+        let idList = "";
+        for (let i in IdArr) {
+            if(i != 0){
+                idList += ","
+            }
+            idList +=IdArr[i].boaCode;
+        }
+        $("#boaCodeList").val(idList);
+
+        /*출력*/
+        $('#checkUser').html(output);
+    }
+
+    // 선택 해제
+    function check3(result) {
+        IdArr = IdArr.filter((element) => element.boaCode !== result);
+        ajaxsearchAll();
+        checkList();
+    }
+
+    // 검색 ajax
+    function ajaxsearchAll() {
+        $.ajax({
+            type: "POST",
+            url: "ajaxsearchAll",
+            data: {
+                "devide": devide,
+                "category": category,
+                "searchName": searchName,
+                "memCode": memCode
+            },
+            async: false,
+            dataType: "json",
+            success: function (result) {
+                console.log(result);
+                searchInner(result);searchInner
+
+            },
+            error: function () {
+                alert("통신실패")
+            }
+
+        });
+    }
+
+</script>
+
+</html>
