@@ -46,6 +46,24 @@
     <script src="js/respond.min.js"></script>
     <![endif]-->
     </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap');
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+    <style>
+        h1, h2, h3, h4, h5, h6, span, p, a, label, input, textarea, button {
+            font-family: 'Gowun Dodum', sans-serif !important;
+            font-size: large !important;
+            letter-spacing: 0rem; !important;
+        }
+    </style>
+
+    <script src="https://kit.fontawesome.com/8591377d67.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://kit.fontawesome.com/8591377d67.css" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="css/modal.css">
 
 </head>
 
@@ -62,7 +80,7 @@
             <div class="colorlib-narrow-content">
                 <div class="row">
                     <div class="col-md-6 col-md-offset-3 col-md-pull-3 animate-box" data-animate-effect="fadeInLeft">
-                        <h2 class="colorlib-heading">그림</h2>
+                        <h2 class="colorlib-heading">[[${category}]]</h2>
                     </div>
                 </div>
                 <div class="row">
@@ -78,10 +96,10 @@
                                     <div class="blog-entry" style="width: 400px;height: 750px">
                                         <a th:href="@{WOR4(workCode=${wlist.workCode}, category=${wlist.category})}" class="blog-img"><img th:src="@{junho/workSpaceImg/{img}(img=${wlist.workImgName})}"style="width: 360px; height: 300px;" class="img-responsive" alt="HTML5 Bootstrap Template by colorlib.com"></a>
                                         <div class="desc">
-                                            <span><small>[[${wlist.memName}]] </small> | <small> [[${wlist.memGrade}]] </small> | <small> <i class="icon-bubble3"></i> [[${wlist.comentNum}]]</small></span>
+                                            <span><small>[[${wlist.memName}]] </small> | <small> [[${wlist.memGrade}]] </small> | <small> <i class="icon-bubble3"></i> 💬 [[${wlist.comentNum}]]</small></span>
                                             <span style="display: flex" th:text="${wlist.workTag}" class="reTag"></span>
                                             <h3><a th:href="@{WOR4(workCode=${wlist.workCode})}">[[${wlist.workTitle}]]</a></h3>
-                                            <small>워크스페이스 좋아요 수 :[[${wlist.likeNum}]]</small> | <small> 총 조회수 수 : [[${wlist.HitNum}]]</small> | <small> 갯수 : [[${wlist.BoardNum}]] </small>
+                                            <small>💓 :[[${wlist.likeNum}]]</small> | <small> 👤 : [[${wlist.HitNum}]]</small> | <small> 📒 : [[${wlist.BoardNum}]] </small>
                                             <p th:text="${wlist.workIntro}"></p>
                                         </div>
                                     </div>
@@ -116,6 +134,7 @@
                                                     <div class="con">
                                                         <h3 style="color: #FFFFFF" th:text="${blist.boaTitle}"></h3>
                                                         <span th:text="${blist.memName}"></span>
+                                                        <span th:text="${blist.category}"></span>
                                                         <p class="icon">
                                                             <span><a><i class="icon-eye">[[${blist.boaHit}]]</i></a></span>
                                                             <span><a><i class="icon-heart">[[${blist.likeNum}]]</i></a></span>
@@ -185,6 +204,11 @@
 <block th:if="${session.login ne null}">
     <input type="hidden" id="loginId" th:value="${session.login.memCode}">
 </block>
+        </div>
+    </div>
+</div>
+
+<script src="js/modal.js"></script>
 </body>
 
 <script>

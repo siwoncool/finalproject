@@ -35,11 +35,15 @@
 
     <!-- 페이징 처리 -->
     <select id="wList" parameterType="paging" resultType="memWorkspace">
-        SELECT * FROM workspacelist WHERE RN BETWEEN #{startRow} AND #{endRow}
+        SELECT * FROM workspacelist WHERE RN BETWEEN #{startRow} AND #{endRow} order by workcode DESC
     </select>
 
     <select id="WOR4" parameterType="int" resultType="memWorkspace">
         select * from finalWorkspaceList where workCode = #{workCode}
+    </select>
+
+    <select id="WOR4Lit" parameterType="int" resultType="literature">
+        select * from literature where LitworkCode = #{workCode}
     </select>
 
     <update id="WOR6" parameterType="memWorkspace">
@@ -127,7 +131,7 @@
 
     <!--워크스페이스 내 게시글 리스트 처리-->
     <select id="boardList" parameterType="paging" resultType="memboard">
-        SELECT * FROM (SELECT finalboardlist.*, ROW_NUMBER() OVER(ORDER BY boaCode ASC) AS RN
+        SELECT * FROM (SELECT finalboardlist.*, ROW_NUMBER() OVER(ORDER BY boaCode DESC) AS RN
                        FROM finalboardlist where boaworkcode = #{workCode}) WHERE RN BETWEEN 1 AND 6
     </select>
 
@@ -173,26 +177,38 @@
         BEGIN
             insert into LITERATUREPAY(litboaCode,litMemCode) values(#{litBoaCode},#{memCode});
 
-            insert into pointhistory(poiMemcode, poicontent, poiupdate,poidate) values(#{memCode},'buy',#{-litPrice},sysdate);
+            insert into pointhistory(poiMemcode, poicontent, poiupdate,poidate) values(#{memCode},'문학 게시글 결제',-#{litPrice},sysdate);
 
-            insert into pointhistory(poiMemcode, poicontent, poiupdate,poidate) values(#{memCodeSell},'sell',#{litPrice},sysdate);
+            insert into pointhistory(poiMemcode, poicontent, poiupdate,poidate) values(#{memCodeSell},'문학 게시글 판매',#{litPrice},sysdate);
         END;
     </update>
 
    <delete id="WOR8_Board" parameterType="int">
-        BEGIN
-            delete board where boaCode = #{boaCode};
+            delete boardHistory where bhboaCode = #{boaCode}
+    </delete>
 
-            delete boardHistory where bhboaCode = #{boaCode};
-        END;
+    <delete id="WOR8_BoardDelete" parameterType="int">
+        delete board where boaCode = #{boaCode}
     </delete>
 
     <delete id="WOR8_Workspace" parameterType="int">
             delete workspace where workCode = #{workCode}
     </delete>
 
-    <delete id="WOR8_Workspace_lit">
-        delete literature where LitworkCode = #{workCode}
+    <delete id="WOR8_Workspace_lit" parameterType="int">
+        delete literature where LitworkCode = #{boaCode}
     </delete>
+
+    <delete id="WOR8_BoardLit" parameterType="int">
+        delete literaturePay where LITBOACODE = #{boaCode}
+    </delete>
+
+    <select id="indexAddObject" resultType="index">
+        select boardNum, memberNum, productNum, memberGradeNum from
+        (select count(*) as boardNum from board),
+        (select count(*) as memberNum from member),
+        (select count(*) as productNum from product),
+        (select count(*) as memberGradeNum from member where not mempaygrade ='없음')
+    </select>
 
 </mapper>

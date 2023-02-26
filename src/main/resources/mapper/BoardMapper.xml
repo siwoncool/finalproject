@@ -233,5 +233,31 @@
         select category from finalboardList where boaCode= #{boaCode}
     </select>
 
+    <!--게시물 삭제시 좋아요삭제-->
+    <delete id="DRA010_1" parameterType="int">
+        DELETE FROM BOALIKE
+        WHERE LIKEBOACODE=#{boaCode}
+    </delete>
+
+    <!-- 게시물 삭제시 댓글 삭제-->
+    <delete id="DRA010_2">
+        DELETE FROM COMENT
+        WHERE COMBOACODE=#{boaCode}
+    </delete>
+
+    <!-- 게시물 삭제시 상품 삭제-->
+    <delete id="DRA010_3">
+        DELETE FROM PRODUCT
+        WHERE PROBOACODE=#{boaCode}
+    </delete>
+    <!-- 게시물 삭제시 문학 삭제-->
+    <delete id="DRA010_4">
+        DELETE FROM LITERATUREPAY
+        WHERE LITBOACODE=#{boaCode}
+    </delete>
+
+    <select id="likenum" parameterType="int" resultType="int">
+        SELECT COUNT(*) FROM BOALIKE WHERE LIKEBOACODE= #{boaCode}
+    </select>
 
 </mapper>

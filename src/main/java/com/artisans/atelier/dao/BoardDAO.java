@@ -117,4 +117,14 @@ public interface BoardDAO {
 
     /*판매한 회원의 포인트*/
     int getSellPointLit(int boaMemCode);
+
+    /*문학 정보 가져오기*/
+    LiteratureDTO WOR4Lit(int workCode);
+
+    /*인덱스 정보 가져오기*/
+    IndexDTO indexAddObject();
+
+    void WOR8_BoardLit(int boaCode);
+
+    int WOR8_BoardDelete(int boaCode);
 }

@@ -45,6 +45,25 @@
     <script src="js/respond.min.js"></script>
     <![endif]-->
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap');
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+    <style>
+        h1, h2, h3, h4, h5, h6, span, p, a, label, input, textarea, button {
+            font-family: 'Gowun Dodum', sans-serif !important;
+            font-size: large !important;
+            letter-spacing: 0rem; !important;
+        }
+    </style>
+
+    <script src="https://kit.fontawesome.com/8591377d67.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://kit.fontawesome.com/8591377d67.css" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="css/modal.css">
+
 </head>
 <style th:replace="mouse.html :: style"></style>
 
@@ -73,11 +92,6 @@
                         </div>
                     </div>
                 </div>
-                <div class="category-links" style="text-align: left">
-                    <!--DDAN 서브카테고리-->
-                    <span id="DDANsubCategory">
-                </div>
-
                 <input type="hidden" id="category" th:value="${paging.category}">
                 <div class="row row-bottom-padded-md">
                     <div th:each="blist: ${blist}">
@@ -90,6 +104,7 @@
                                     <div class="con">
                                         <h3 style="color: #FFFFFF" th:text="${blist.boaTitle}"></h3>
                                         <span th:text="${blist.memName}"></span>
+                                        <span th:text="${blist.category}"></span>
                                         <p class="icon">
                                             <span><i class="icon-eye">[[${blist.boaHit}]]</i></span>
                                             <span><i class="icon-heart">[[${blist.likeNum}]]</i></span>
@@ -119,14 +134,15 @@
                 <div class="row">
                     <div class="col-md-12 animate-box" data-animate-effect="fadeInLeft">
                         <ul class="pagination">
-                            <li th:if="${paging.page <= 1}"><a>[이전]</a></li>
+                            <li th:if="${paging.page <= 1}"><a>&laquo;</a></li>
                 <li th:if="${paging.page > 1}">
-                    <a th:href="@{DRA008(page=${paging.page -1} , limit=${paging.limit},category=${paging.category},cateCode=${paging.cateCode},orderby=${paging.orderby})}">[이전]</a>
+                    <a th:href="@{DRA008(page=${paging.page -1} , limit=${paging.limit},category=${paging.category},cateCode=${paging.cateCode},orderby=${paging.orderby})}">&laquo;</a>
                 </li>
                 &nbsp;
                 <!-- [페이지 번호] 페이지에 대한 처리 -->
-                <li th:each="i : ${#numbers.sequence(paging.startpage, paging.endpage)}">
-                    <a th:href="@{DRA008(page=${i} , limit=${paging.limit} ,category=${paging.category},cateCode=${paging.cateCode},orderby=${paging.orderby})}"><span th:if="${paging.page == i}">
+                <li th:each="i : ${#numbers.sequence(paging.startpage, paging.endpage)}" style="background-color: #FFC300">
+                    <a th:href="@{DRA008(page=${i} , limit=${paging.limit} ,category=${paging.category},cateCode=${paging.cateCode},orderby=${paging.orderby})}">
+                        <span th:if="${paging.page == i}">
                                                     [[${i}]]
                                                 </span>
                     <span th:unless="${paging.page == i}">
@@ -135,9 +151,9 @@
                 </li>
                 <!-- [다음] 페이지에 대한 처리 -->
                 &nbsp;
-                <li th:if="${paging.page >= paging.maxpage}">[다음]</li>
+                <li th:if="${paging.page >= paging.maxpage}"><a>&raquo;</a></li>
                 <li th:if="${paging.page < paging.maxpage}">
-                    <a th:href="@{DRA008(page=${paging.page +1}, limit=${paging.limit},category=${paging.category},cateCode=${paging.cateCode},orderby=${paging.orderby})}">[다음]</a>
+                    <a th:href="@{DRA008(page=${paging.page +1}, limit=${paging.limit},category=${paging.category},cateCode=${paging.cateCode},orderby=${paging.orderby})}">&raquo;</a>
                 </li>
                         </ul>
                     </div>
@@ -198,16 +214,16 @@
         }
     })
 
-    function musicSubCategory(List) {
-        let output = ""
-        output += "  <a href=\"DRA008?category=" + category + "\" >전체</a>"
-        for (let i in List) {
-
-            output += "<a href=\"DRA008?cateCode=" + List[i].cateCode + "&category=" + category + "\">" + List[i].subCategory + "</a>"
-        }
-
-        $("#DDANsubCategory").html(output);
-    }
+    // function musicSubCategory(List) {
+    //     let output = ""
+    //     output += "  <a href=\"DRA008?category=" + category + "\" >전체</a>"
+    //     for (let i in List) {
+    //
+    //         output += "<a href=\"DRA008?cateCode=" + List[i].cateCode + "&category=" + category + "\">" + List[i].subCategory + "</a>"
+    //     }
+    //
+    //     $("#DDANsubCategory").html(output);
+    // }
 
     function orderby(order) {
         location.href = "DRA008?cateCode=" + cateCode + "&category=" + category + "&orderby=" + order;
@@ -217,18 +233,18 @@
 
     let memCode = $('#loginId').val();
 
-    function checkLiterature(boaCode, category){
+    function checkLiterature(boaCode, category) {
         console.log(boaCode);
         console.log(category);
         console.log(memCode);
 
-        if(category=="문학") {
+        if (category == "문학") {
             $.ajax({
                 type: 'post',
                 url: 'ajaxPayAndCheck',
                 data: {
-                    "boaCode"   : boaCode,
-                    "memCode" : memCode
+                    "boaCode": boaCode,
+                    "memCode": memCode
                 },
                 dataType: "text",
                 success:
@@ -238,11 +254,11 @@
                             // 사용할 수 있는 아이디
                             console.log("result!=null")
                             console.log("가격은?" + result);
-                            if(result ==0){
+                            if (result == 0) {
                                 checkLoginNow();
-                            }else if(result==1){
-                                location.href="DRA004?boaCode="+boaCode;
-                            }else{
+                            } else if (result == 1) {
+                                location.href = "DRA004?boaCode=" + boaCode;
+                            } else {
                                 checkIdAndPay(result);
                             }
                         } else {
@@ -254,14 +270,16 @@
                     alert('ajaxPayAndCheck 실패');
                 }
             })
-        }else{
-            location.href="DRA004?boaCode="+boaCode;
+        } else {
+            location.href = "DRA004?boaCode=" + boaCode;
         }
-        function asd(){
-            console.log("이게 되나 시발???"+boaCode);
+
+        function asd() {
+            console.log("이게 되나 시발???" + boaCode);
         }
-        function checkIdAndPay(price){
-            if (!confirm("이 게시글의 가격은 "+price+"입니다 읽으시겠습니까?.")) {
+
+        function checkIdAndPay(price) {
+            if (!confirm("이 게시글의 가격은 " + price + "입니다 읽으시겠습니까?.")) {
                 /*비동의*/
                 alert("취소(아니오)를 누르셨습니다.");
             } else {
@@ -281,30 +299,30 @@
                     alert("취소되었습니다.");
                 } else {
                     /*동의*/
-                    location.href='join'
+                    location.href = 'join'
                 }
-            }else{/*결제 진행*/
+            } else {/*결제 진행*/
                 console.log('아이디 있음');
                 /*결제 진행  ajax*/
                 $.ajax({
                     type: 'post',
                     url: 'ajaxLitPay',
                     data: {
-                        "boaCode"   : boaCode,
-                        "memCode" : memCode
+                        "boaCode": boaCode,
+                        "memCode": memCode
                     },
                     dataType: "text",
                     success:
                         function (result) {
-                            if(result==1){
+                            if (result == 1) {
                                 /*적절히 성공할시 */
                                 console.log('결제성공');
-                                location.href="DRA004?boaCode="+boaCode;
-                            }else{
+                                location.href = "DRA004?boaCode=" + boaCode;
+                            } else {
                                 /*돈이 없거나 */
                                 /*등등*/
                                 alert('포인트가 부족합니다');
-                                location.href='Pay_PayMembership';
+                                location.href = 'Pay_PayMembership';
                                 console.log('결제실패')
                             }
                         },

@@ -12,6 +12,9 @@
     <link href="css/profile/nucleo-icons.css" rel="stylesheet"/>
     <link href="css/profile/nucleo-svg.css" rel="stylesheet"/>
 
+    <script src="https://kit.fontawesome.com/8591377d67.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://kit.fontawesome.com/8591377d67.css" crossorigin="anonymous">
+
     <link rel="stylesheet" href="css/main/animate.css">
     <!-- Icomoon Icon Fonts-->
     <link rel="stylesheet" href="css/main/icomoon.css">
@@ -102,13 +105,22 @@
 
 
 </head>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap');
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
 <style>
     h1, h2, h3, h4, h5, h6, span, p, a, label, input, textarea, button {
         font-family: 'Gowun Dodum', sans-serif !important;
         font-size: large !important;
+        letter-spacing: 0rem; !important;
     }
 </style>
 <style th:replace="mouse.html :: style"></style>
+
+<link rel="stylesheet" href="css/modal.css">
 <body class="blog-author bg-gray-200">
 <div id="colorlib-page">
     <a href="#" class="js-colorlib-nav-toggle colorlib-nav-toggle"><i></i></a>
@@ -123,7 +135,9 @@
             <div>
                 <div class="colorlib-blog" data-animate-effect="fadeInLeft">
                     <div class="colorlib-narrow-content">
-                        <string style="font-size: 80px;">피드</string>
+                        <div class="col-md-6 col-md-offset-3 col-md-pull-3 animate-box" data-animate-effect="fadeInLeft">
+                            <h2 class="colorlib-heading">피드</h2>
+                        </div>
                         <div class="row1" id="workspaceBoard">
 
                         </div>
@@ -162,6 +176,8 @@
 
                 <!-- MAIN JS -->
                 <script src="js/main.js"></script>
+
+                <script src="js/modal.js"></script>
             </div>
         </div>
     </div>
@@ -220,15 +236,19 @@
 
         for (let i in result) {
             output +=
-                "<div class=\"col-md-3 animate-box\" data-animate-effect=\"fadeInLeft\" style='width: 80%; height: 1000px;'>" +
-                "<div class=\"project\" style=\"background-image: url(PSW/bestimg/" + result[i].boaBestImg + "); height: 100%;\">" +
+                "<div class=\"col-md-3 animate-box\" data-animate-effect=\"fadeInLeft\" style='width: 32%; height: 500px;'>" +
+                "<div class=\"project\" style=\"background-image: url(PSW/bestimg/" + result[i].boaBestImg + "); height: 90%;\">" +
                 "<div class=\"desc\">" +
                 "<a href='DRA004?boaCode=" + result[i].boaCode + "'>" +
                 "<div style='width: 100%; height: 100%;' class=\"con\">" +
 
-                "<strong style='font-size: 80px;'>" + result[i].boaTitle + "</strong>" +
+                "<span>" + result[i].boaTitle + "</span>" +
+                "</br>" +
+                "<span>" + result[i].memName + "</span>" +
+                "<span>" + result[i].boaTag + "</span>" +
                 "<p class=\"icon\">" +
-                "<span style='font-size: 80px;'><i class=\"icon-eye\"></i> " + result[i].boaHit + "</span>" +
+                "<span><i class=\"icon-eye\"></i> " + result[i].boaHit + "</span>" +
+                "<span><i class=\"icon-heart\"></i>" + result[i].likeNum +  "</span>" +
                 "</p>" +
 
                 "</div>" +

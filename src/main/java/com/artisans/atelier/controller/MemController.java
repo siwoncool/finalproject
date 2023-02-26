@@ -154,4 +154,11 @@ public class MemController {
         return "aiChat";
     }
 
+    /////////////////////////////////////////////////////////////////////
+    // 휴면 계정 전환
+    @GetMapping("/MEM014")
+    public ModelAndView MEM014(@RequestParam("user")int memCode){
+        return mav= msvc.MEM014(memCode);
+    }
+
 }

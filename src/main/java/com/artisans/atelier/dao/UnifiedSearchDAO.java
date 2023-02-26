@@ -21,4 +21,7 @@ public interface UnifiedSearchDAO {
 
     // 통합검색 - 게시글 상세보기
     List<MemBoardDTO> BoardMoreSearch(PageDTO paging);
+
+    // 태그 중심 추천
+    List<String> TagRecommand(int memCode);
 }

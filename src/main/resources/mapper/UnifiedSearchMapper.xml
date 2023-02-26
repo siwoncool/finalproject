@@ -22,4 +22,11 @@
     <select id="BoardMoreSearch" parameterType="paging" resultType="memboard">
         <![CDATA[ ${sql} ]]>
     </select>
+
+    <!--태그 중심의 추천-->
+    <select id="TagRecommand" parameterType="int" resultType="String">
+        <![CDATA[
+        SELECT DISTINCT BOATAG FROM boardhistory bh INNER JOIN BOARD ON BHBOACODE = BOACODE WHERE bh.bhmemcode = #{memCode} AND BOATAG IS NOT NULL
+        ]]>
+    </select>
 </mapper>

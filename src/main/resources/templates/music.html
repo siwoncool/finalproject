@@ -10,6 +10,8 @@
 
 	<link rel="mask-icon" type="image/x-icon" href="https://cpwebassets.codepen.io/assets/favicon/logo-pin-b4b4269c16397ad2f0f7a01bcdf513a1994f4c94b8af2f191c09eb0d601762b1.svg" color="#111">
 
+	<script src="https://kit.fontawesome.com/8591377d67.js" crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="https://kit.fontawesome.com/8591377d67.css" crossorigin="anonymous">
 
 
 	<title>SolMusic | HTML Template</title>
@@ -149,6 +151,22 @@
 	<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 	<![endif]-->
 
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap');
+	</style>
+	<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+	<style>
+		h1, h2, h3, h4, h5, h6, span, p, a, label, input, textarea, button {
+			font-family: 'Gowun Dodum', sans-serif !important;
+			font-size: large !important;
+			letter-spacing: 0rem; !important;
+		}
+	</style>
+
+	<link rel="stylesheet" href="css/modal.css">
+
 </head>
 <style th:replace="mouse.html :: style"></style>
 <body  translate="no" style="background-color: #FFFFFF !important;">
@@ -180,6 +198,7 @@
 				</span>
 					</div>
 				</div>
+
 				<div class="category-items">
 					<!--워크스페이스 시작--><!--DDAN 리스트-->
 					<div class="row">
@@ -188,11 +207,11 @@
 								<img th:src="@{/junho/workSpaceImg/{workImgName}(workImgName=${list.workImgName})}" alt="" width="300px" height="300px">
 								<div class="ci-text">
 									<h4>[[${list.memName}]]</h4>
-									<p>태그 : [[${list.workTag}]]</p>
-									<p>총 좋아요 수 : [[${list.likeNum}]]</p>
-									<p>총 댓글 갯수 : [[${list.comentNum}]]</p>
-									<p>총 조회수 수 : [[${list.HitNum}]]</p>
-									<p>총 게시글 수 : [[${list.BoardNum}]]</p>
+									<p><span style="display: flex" th:text="${list.workTag}" class="reTag"></span></p>
+									<p>💓 : [[${list.likeNum}]]</p>
+									<p>💬 : [[${list.comentNum}]]</p>
+									<p>👤 : [[${list.HitNum}]]</p>
+									<p>📒 : [[${list.BoardNum}]]</p>
 								</div>
 								<a th:href="@{WOR4(workCode=${list.workCode})}" class="ci-link"><i class="fa fa-play"></i></a>
 							</div>
@@ -212,7 +231,35 @@
 			</div>
 		</div>
 		<!-- Category section end -->
+		<div style="
+		height: 560px;
+		">
+			<iframe id="nx-player" frameborder="0" allowfullscreen="1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" title="대한민국 최고 엘리트 유망주들을 만나다 I 폼카우터 2화 I 그라운드N" width="100%" height="100%" src="https://www.youtube.com/embed/k3rUzmGK1Hs?mute=0&amp;autoplay=1&amp;playsinline=1&amp;widget_referrer=https%3A%2F%2Ffifaonline4.nexon.com%2F&amp;enablejsapi=1&amp;origin=https%3A%2F%2Fnccplayer.na.nexon.com&amp;widgetid=1"></iframe>
 
+		</div>
+		<script>
+			// API 키 설정
+			var apiKey = 'AIzaSyAHmSzEtbMvGGGufr4sJmTzZp45ELBM67g';
+
+			// 인기 있는 음악 동영상 검색 요청 보내기
+			var xhr = new XMLHttpRequest();
+			xhr.open('GET', 'https://www.googleapis.com/youtube/v3/search?part=id%2Csnippet&type=video&q= 인기있는 뮤비  &key=' + apiKey + '&maxResults=2');
+			xhr.onload = function() {
+				if (xhr.status === 200) {
+					// 검색 결과에서 동영상 ID 가져오기
+					var videoId = JSON.parse(xhr.responseText).items[0].id.videoId;
+
+					// 동영상 재생을 위한 URL 생성
+					var url = 'https://www.youtube.com/embed/' + videoId;
+
+					// iframe 태그의 src 속성에 URL 지정하기
+					document.getElementById('player').setAttribute('src', url);
+				} else {
+					console.error('Request failed.  Returned status of ' + xhr.status);
+				}
+			};
+			xhr.send();
+		</script>
 		<!-- Songs section  -->
 		<section class="songs-section">
 			<div class="container">
@@ -226,10 +273,10 @@
 								<div class="song-info">
 									<h4>[[${list.memName}]]</h4>
 									<p>[[${list.memGrade}]]</p>
-									<p>태그 : [[${list.boaTag}]]</p>
+									<p><span style="display: flex" th:text="${list.boaTag}" class="reTag"></span></p>
 									<span th:id="asd+|${stat.index}|">[[asd+|${stat.index}|]]</span>
-									<p>좋아요 수 : [[${list.likeNum}]]</p>
-									<p>댓글 수 : [[${list.comentNum}]]</p>
+									<p>💓 : [[${list.likeNum}]]</p>
+									<p>💬 : [[${list.comentNum}]]</p>
 								</div>
 							</div>
 						</div>
@@ -319,7 +366,7 @@
 	<script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>
 	<script src="https://cpwebassets.codepen.io/assets/common/stopExecutionOnTimeout-2c7831bb44f98c1391d6a4ffda0e1fd302503391ca806e7fcc7b9b87197aec26.js"></script>
 
-
+		<script src="js/modal.js"></script>
 
 	<script id="rendered-js">
 		console.clear();
@@ -1035,72 +1082,72 @@
 <!-- Songs section end -->
 <!--DDAN 서브카테고리 가져오기-->
 <script src="https://code.jquery.com/jquery-3.6.3.js" integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM=" crossorigin="anonymous"></script>
-<script>
-	/*서브 카테고리 가져와 열기*/
-	let music = "음악";
+	<script>
+		/*서브 카테고리 가져와 열기*/
+		let music = "음악";
 
-	$.ajax({
-		type: 'post',
-		url : 'category',
-		data:{
-			"cate" : music
-		},
-		dataType: "json",
-		success:
-				function(subCategoryList){
-					console.log("연결");
-					/*선택 리스트 출력*/
-					musicSubCategory(subCategoryList);
-				},
-		error:function (){
-			alert('category 연결 실패')
+		$.ajax({
+			type: 'post',
+			url : 'category',
+			data:{
+				"cate" : music
+			},
+			dataType: "json",
+			success:
+					function(subCategoryList){
+						console.log("연결");
+						/*선택 리스트 출력*/
+						musicSubCategory(subCategoryList);
+					},
+			error:function (){
+				alert('category 연결 실패')
+			}
+		})
+
+		function musicSubCategory(List){
+			let output=""
+
+			for(let i in List){
+				output += "<a href=\"MUS003?cateCode="+List[i].cateCode+"\">"+List[i].subCategory+"</a>"
+			}
+
+			$("#DDANsubCategory").html(output);
 		}
-	})
 
-	function musicSubCategory(List){
-		let output=""
+		//////////////////////////////////////////////////////////////////////////////////////////////////
+		/*태그 리스트 출력*/
+		let workList = [];
+		workList = "[[${WorkSpaceList}]]";
+		/*console.log(workList);*/
+		let workTag = [];
 
-		for(let i in List){
-			output += "<a href=\"MUS003?cateCode="+List[i].cateCode+"\">"+List[i].subCategory+"</a>"
+		for(let i; i <workList.length; i++){
+			console.log(workList[i]);
+		};
+
+		/////////////////////////////////////////////////////////////////////////////////////
+		/*태그 기능 실행 자바 스크립트*/
+
+		let retag = $('.reTag');
+
+		for (let i = 0; i <   retag.length; i++) {
+			let tagArr = $(retag[i]).text().split(",")
+			let input = "";
+
+			for ( j in tagArr){
+				//console.log(tagArr[j]);
+				input += "<a href='UnifiedSearch?q="+tagArr[j].replace('#','%23')+"'>"+tagArr[j]+"</a>"+"<br/>";
+			}
+			$(retag[i]).html(input);
 		}
+		/////////////////////////////////////////////////////////////////////////////////////
+		let category = $('#category').val();
+		let cateCode = $('#cateCode').val();
 
-		$("#DDANsubCategory").html(output);
-	}
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////
-	/*태그 리스트 출력*/
-	let workList = [];
-	workList = "[[${WorkSpaceList}]]";
-	/*console.log(workList);*/
-	let workTag = [];
-
-	for(let i; i <workList.length; i++){
-		console.log(workList[i]);
-	};
-
-	/////////////////////////////////////////////////////////////////////////////////////
-	/*태그 기능 실행 자바 스크립트*/
-
-	let retag = $('.reTag');
-
-	for (let i = 0; i <   retag.length; i++) {
-		let tagArr = $(retag[i]).text().split(",")
-		let input = "";
-
-		for ( j in tagArr){
-			//console.log(tagArr[j]);
-			input += "<a href='UnifiedSearch?q="+tagArr[j].replace('#','%23')+"'>"+tagArr[j]+"</a>"+"<br/>";
+		function morebView(){
+			location.href="DRA008?cateCode="+cateCode+"&category="+category;
 		}
-		$(retag[i]).html(input);
-	}
-	/////////////////////////////////////////////////////////////////////////////////////
-	let category = $('#category').val();
-	let cateCode = $('#cateCode').val();
-
-	function morebView(){
-		location.href="DRA008?cateCode="+cateCode+"&category="+category;
-	}
-</script>
+	</script>
 
 <!--로그인 할시 onclick기능 추가-->
 <script th:if="${session.login ne null}">
@@ -1143,6 +1190,7 @@
 
 	}
 </script>
+
 
 
 <!--====== Javascripts & Jquery ======-->

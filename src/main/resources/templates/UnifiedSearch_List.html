@@ -13,6 +13,9 @@
 
     <link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500,700" rel="stylesheet">
 
+    <script src="https://kit.fontawesome.com/8591377d67.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://kit.fontawesome.com/8591377d67.css" crossorigin="anonymous">
+
     <!-- Animate.css -->
     <link rel="stylesheet" href="css/main/animate.css">
     <!-- Icomoon Icon Fonts-->
@@ -45,6 +48,22 @@
     <!--[if lt IE 9]>
     <script src="js/respond.min.js"></script>
     <![endif]-->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap');
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+    <style>
+        h1, h2, h3, h4, h5, h6, span, p, a, label, input, textarea, button {
+            font-family: 'Gowun Dodum', sans-serif !important;
+            font-size: large !important;
+            letter-spacing: 0rem; !important;
+        }
+    </style>
+
+    <link rel="stylesheet" href="css/modal.css">
 
 </head>
 
@@ -82,13 +101,12 @@
                                                     alt="HTML5 Bootstrap Template by colorlib.com"></a>
                                             <div class="desc">
                                                 <span><small>[[${wlist.memName}]] </small> | <small> [[${wlist.memGrade}]] </small> | <small> <i
-                                                        class="icon-bubble3"></i> [[${wlist.comentNum}]]</small></span>
+                                                        class="icon-bubble3"></i> 💬 [[${wlist.comentNum}]]</small></span>
                                                 <span style="display: flex" th:text="${wlist.workTag}"
                                                       class="reTag"></span>
                                                 <h3><a th:href="@{WOR4(workCode=${wlist.workCode})}">[[${wlist.workTitle}]]</a>
-                                                </h3>
-                                                <small>워크스페이스 좋아요 수 :[[${wlist.likeNum}]]</small> | <small> 총 조회수 수 :
-                                                [[${wlist.HitNum}]]</small> | <small> 갯수 :
+                                                </h3> <small>💓 :[[${wlist.likeNum}]]</small> | <small> 👤 :
+                                                [[${wlist.HitNum}]]</small> | <small> 📒 :
                                                 [[${wlist.BoardNum}]] </small>
                                                 <p th:text="${wlist.workIntro}"></p>
                                             </div>
@@ -162,8 +180,8 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div></a>
-                                            </div>
+                                                </div>
+                                            </a></div>
                                         </div>
 
                                         <div id="get-in-touch" class="colorlib-bg-color" style="width: 1500px">
@@ -213,11 +231,15 @@
 </div>
 </body>
 
+<script src="js/modal.js"></script>
+
 <!--cdn-->
 <!--<script src="https://code.jquery.com/jquery-3.6.3.js" integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM="-->
 <!--        crossorigin="anonymous"></script>-->
 
-
+<block th:if="${session.login ne null}">
+    <input type="hidden" id="loginId" th:value="${session.login.memCode}">
+</block>
 <script>
     let retag = $('.reTag');
 
@@ -230,6 +252,66 @@
             input += "<a href='UnifiedSearch?q=" + tagArr[j].replace('#', '%23') + "'>" + tagArr[j] + "</a>" + "<br/>";
         }
         $(retag[i]).html(input);
+    }
+
+    // 문학 게시글 페이
+
+    let memCode = $('#loginId').val();
+
+    function checkLiterature(boaCode, category) {
+        console.log(boaCode);
+        console.log(category);
+        console.log(memCode);
+
+        if (category == "문학") {
+            $.ajax({
+                type: 'post',
+                url: 'ajaxPayAndCheck',
+                data: {
+                    "boaCode": boaCode,
+                    "memCode": memCode
+                },
+                dataType: "text",
+                success:
+                    function (result) {
+                        if (result != null) {
+                            // result 0이면 꽁자, 가격이 나오면 이면 이미 결제해야함
+                            // 사용할 수 있는 아이디
+                            console.log("result!=null")
+                            console.log("가격은?" + result);
+                            if (result == 0) {
+                                checkLoginNow();
+                            } else if (result == 1) {
+                                location.href = "DRA004?boaCode=" + boaCode;
+                            } else {
+                                checkIdAndPay(result);
+                            }
+                        } else {
+                            // 사용할 수 없는 아이디
+                            console.log("result==null")
+                        }
+                    },
+                error: function () {
+                    alert('ajaxPayAndCheck 실패');
+                }
+            })
+        } else {
+            location.href = "DRA004?boaCode=" + boaCode;
+        }
+
+        function asd() {
+            console.log("이게 되나" + boaCode);
+        }
+
+        function checkIdAndPay(price) {
+            if (!confirm("이 게시글의 가격은 " + price + "입니다 읽으시겠습니까?.")) {
+                /*비동의*/
+                alert("취소(아니오)를 누르셨습니다.");
+            } else {
+                /*동의*/
+                checkLoginNow();
+            }
+        }
     }
 
 </script>

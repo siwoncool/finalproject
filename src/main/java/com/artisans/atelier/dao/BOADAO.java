@@ -70,4 +70,13 @@ public interface BOADAO {
     int bwCountsql(String sql);
 
 
+    void DRA010_1(int boaCode);
+
+    void DRA010_2(int boaCode);
+
+    void DRA010_3(int boaCode);
+
+    void DRA010_4(int boaCode);
+
+    int likenum(int boaCode);
 }

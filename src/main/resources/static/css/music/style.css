@@ -229,7 +229,6 @@ Header section
 .site-logo {
 	display: inline-block;
 	padding: 0;
-	padding: 44px 15px;
 }
 
 .header-right {
@@ -1005,7 +1004,7 @@ Category page
 
 .jp-play:after {
 	left: 9px;
-	top: 7px;
+	top: 0px;
 	width: 11px;
 	height: 13px;
 	content: url('/img/icons/play.png');
@@ -1013,20 +1012,20 @@ Category page
 
 .jp-state-playing .jp-play::after,
 .playing .jp-play::after {
-	top: 7px !important;
-	left: 7px !important;
+	top: 1px ;
+	left: 7px ;
 	content: url('/img/icons/pause.png');
 }
 
 .jp-prev:after {
-	top: 7px !important;
-	left: 6px !important;
+	top: -3px ;
+	left: 6px ;
 	content: url('/img/icons/back.png');
 }
 
 .jp-next:after {
-	top: 7px !important;
-	right: 7px !important;
+	top: -3px ;
+	right: 7px ;
 	content: url('/img/icons/next.png');
 }
 

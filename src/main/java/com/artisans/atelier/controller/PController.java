@@ -69,11 +69,6 @@ public class PController {
         return "Mem_Notice";
     }
 
-    @GetMapping("/Pay_PayMembership")
-    public String Pay_PayMembership(){
-        return "Pay_PayMembership";
-    }
-
     @GetMapping("Mem_ReportList")
     public String Mem_ReportList() { return "Mem_ReportList";}
 
@@ -86,15 +81,9 @@ public class PController {
     @GetMapping("/Dra_Write")
     public String Dra_Write(){ return "Dra_Write";}
 
-
     @GetMapping("/Pay_Membership")
     public String Pay_Membership(){
         return "Pay_Membership";
-    }
-
-    @GetMapping("/Pay_pay")
-    public String Pay_pay(){
-        return "Pay_pay";
     }
 
     @GetMapping("/Pro_Profile")
@@ -111,6 +100,29 @@ public class PController {
     public String Pay_ASaleInfo(){
 
         return "Pay_ASaleInfo";
+    }
+
+    @GetMapping("/Pay_Payment")
+    public String Pay_Payment(){
+        return "Pay_Payment";
+    }
+
+    @GetMapping("/Pay_ReturnPoint")
+    public String Pay_ReturnPoint(){
+
+        return "Pay_ReturnPoint";
+    }
+
+    @GetMapping("/Pay_Write")
+    public String Pay_Write(){
+
+        return "Pay_Write";
+    }
+
+    @GetMapping("/Pay_PayList")
+    public String Pay_PayList(){
+
+        return "Pay_PayList";
     }
 
 }

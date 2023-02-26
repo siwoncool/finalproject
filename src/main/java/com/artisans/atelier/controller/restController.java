@@ -1,8 +1,10 @@
 package com.artisans.atelier.controller;
 
+import com.artisans.atelier.dao.BoardDAO;
 import com.artisans.atelier.dto.*;
 import com.artisans.atelier.service.BoardService;
 import com.artisans.atelier.service.MemService;
+import com.artisans.atelier.service.PayService;
 import com.artisans.atelier.service.UnifiedSearchService;
 import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +37,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import org.springframework.web.servlet.ModelAndView;
+
 import java.io.*;
 import java.net.*;
 import java.util.HashMap;
@@ -49,6 +53,10 @@ public class restController {
     private final BoardService bsvc;
 
     private final UnifiedSearchService ssvc;
+
+    private final PayService psvc;
+
+    private final BoardDAO bdao;
 
     // 아이디 중복 체크 ajax
     @PostMapping("MEM002")
@@ -428,6 +436,14 @@ public class restController {
 
     }
 
+    // DRA011 : 게시물 보았을떄 히스토리 남기기
+    @PostMapping("/DRA011")
+    public String DRA011(@ModelAttribute BoardHistoryDTO boardhistory) {
+        System.out.println("?????날라왓어>?>>"+boardhistory);
+        String result= bsvc.DRA011(boardhistory);
+        return result;
+    }
+
     ///////////////////////////////////
     // 프로필
 
@@ -506,7 +522,7 @@ public class restController {
                          @RequestParam("target")String target,
                          @RequestParam("content")String content){
         String clientId = "3LxXrDRRUUR_zvix9u3d";//애플리케이션 클라이언트 아이디값";
-        String clientSecret = "xXrJ2Gm7Ho";//애플리케이션 클라이언트 시크릿값";
+        String clientSecret = "V31IST37V7";//애플리케이션 클라이언트 시크릿값";
 
         String apiURL = "https://openapi.naver.com/v1/papago/n2mt";
         String text;
@@ -627,11 +643,99 @@ public class restController {
         return ssvc.RegularRecommand(memCode,page);
     }
 
-    // DRA011 : 게시물 보았을떄 히스토리 남기기
-    @PostMapping("/DRA011")
-    public String DRA011(@ModelAttribute BoardHistoryDTO boardhistory) {
-        System.out.println("?????날라왓어>?>>"+boardhistory);
-        String result= bsvc.DRA011(boardhistory);
+    //////////////////////////////////////////////////////////////////////////
+    // 2023-02-17
+    // 태그 중심 추천
+    @PostMapping("/TagRecommand")
+    public List<MemBoardDTO> TagRecommand(@RequestParam("memCode")int memCode,
+                                          @RequestParam("page")int page){
+        return ssvc.TagRecommand(memCode,page);
+    }
+
+    // 프로필에서 전체게시글 가져오기(상품페이지)
+    @PostMapping("/productAll")
+    public List<Object> ProfileBoard(@RequestParam("page") int page){
+        //System.out.println("컨트롤러 도착");
+        List<Object> result = psvc.productAll(page);
         return result;
     }
+
+    // 프로필에서 카테고리별 게시글 가져오기
+    @PostMapping("/productCategory")
+    public List<Object> productCategory(@RequestParam("category") String category,
+                                        @RequestParam("page") int page){
+        //System.out.println("컨트롤러 도착");
+        List<Object> result = psvc.productCategory(category,page);
+        return result;
+    }
+
+    // 프로필에서 카테고리별 게시글 가져오기
+    @PostMapping("/ProSelect")
+    public List<Object> ProSelect(@RequestParam("category") String category,
+                                  @RequestParam("page") int page,
+                                  @RequestParam("order") String order){
+        System.out.println("(select)컨트롤러 도착");
+        List<Object> result = psvc.ProSelect(category,page, order);
+        return result;
+    }
+
+    // 프로필에서 카테고리별 게시글 가져오기
+    @PostMapping("/proTime")
+    public ProductBoardDTO proTime(@RequestParam("proBoaCode") int proBoaCode){
+        System.out.println("(select)컨트롤러 도착");
+        ProductBoardDTO result = psvc.proTime(proBoaCode);
+        return result;
+    }
+
+    // 경매 현재 입찰가 가져오기(최소 입찰가)
+    @PostMapping("/auctionGet")
+    public AuctionDTO auctionGet(@RequestParam("AucProCode") int AucProCode){
+        System.out.println("(auctionGet)컨트롤러 도착, AucProCode : " + AucProCode);
+        AuctionDTO result = psvc.auctionGet(AucProCode);
+        return result;
+    }
+
+    // 경매 새로 입찰하기
+    @PostMapping("/auctionInsert")
+    public AuctionDTO auctionInsert(@ModelAttribute AuctionDTO auction){
+        System.out.println("(auctionInsert)컨트롤러 도착, auction : " + auction);
+        AuctionDTO result = psvc.auctionInsert(auction);
+        return result;
+    }
+
+    // 상품 등록할때 상품 테이블에 있는지 확인하기
+    @PostMapping("/checkProduct")
+    public String checkProduct(@RequestParam("boaCode") int boaCode){
+        System.out.println("(checkProduct)컨트롤러 도착, boaCode : " + boaCode);
+        String result = psvc.checkProduct(boaCode);
+        return result;
+    }
+
+    // 상품 시간이 종료되었을때
+    @PostMapping("/auctionFinish")
+    public AucMemberDTO auctionFinish(@ModelAttribute AuctionDTO auction){
+        System.out.println("(auctionFinish)컨트롤러 도착, auction : " + auction);
+        AucMemberDTO result = psvc.auctionFinish(auction);
+        return result;
+    }
+
+    // indexAddObject : 인덱스 페이지 숫자 변경 ajax
+    @PostMapping("/indexAddObject")
+    public IndexDTO indexAddObject(){
+        IndexDTO indexDTO = new IndexDTO();
+        indexDTO = bdao.indexAddObject();
+        ModelAndView mav = new ModelAndView();
+        mav.addObject("index",indexDTO);
+
+        return indexDTO;
+    }
+
+    // 좋아요 갯수 가져오기
+    @PostMapping("likenum")
+    public int DRA005_1(@RequestParam("boaCode") int boaCode){
+        int result=bsvc.likenum(boaCode);
+        System.out.println("result =============="+result);
+        return result;
+    }
+
 }

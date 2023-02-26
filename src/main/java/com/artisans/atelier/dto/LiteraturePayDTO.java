@@ -8,5 +8,6 @@ import org.apache.ibatis.type.Alias;
 public class LiteraturePayDTO {
     private int litBoaCode;    //결제한 게시글
     private int litMemCode;     // 결제하는 회원
+    private String litDate;     // 결제한 날짜
 
 }

@@ -71,7 +71,7 @@ public class MemService {
             // 이메일 인증 보내기
             String str = "<h2>Athelier 회원 가입을 축하합니다.</h2>" +
                     "<p>다양한 창작 활동을 기원하며 아래 링크를 통해 인증을 해주세요</p>" +
-                    "<p><a href='http://192.168.0.67:9090/MEM005?user=" + memCode + "'>로그인 하기</a></p>";
+                    "<p><a href='http://192.168.0.35:9090/MEM005?user=" + memCode + "'>로그인 하기</a></p>";
 
             MimeMessage mail = mailSender.createMimeMessage();
 
@@ -80,8 +80,10 @@ public class MemService {
             mail.addRecipient(Message.RecipientType.TO, new InternetAddress(member.getMemId()));
             mailSender.send(mail);
 
-            // 인덱스 페이지로 이동
-            mav.setViewName("index");
+            int alert =1;
+            mav.addObject("alertMessage",alert);
+            mav.setViewName("MemJoin&Login");
+
         } catch (Exception e) {
             System.out.println("회원 가입 에러 발생");
 
@@ -100,7 +102,7 @@ public class MemService {
             // 해당 회원 전체 내용을 가져오도록 로그인 메소드 사용
             MemberDTO member = mdao.MEM006(memCode);
 
-            if (member.getMemState().equals("미인증")) {
+            if (member.getMemState().equals("미인증") || member.getMemState().equals("휴면")) {
                 // 인증상태 변경
                 mdao.MEM005(memCode);
 
@@ -143,6 +145,28 @@ public class MemService {
 
                 // 인덱스로 이동
                 mav.setViewName("index");
+            }else if (login.getMemState().equals("휴면")) {
+                try {
+                    // 이메일 인증 보내기
+                    String str = "<h2>Athelier 돌아오신걸 축하합니다.</h2>" +
+                            "<p>다양한 창작 활동을 기원하며 아래 링크를 통해 인증을 해주세요</p>" +
+                            "<p><a href='http://192.168.0.67:9090/MEM005?user=" + memCode + "'>로그인 하기</a></p>";
+
+                    MimeMessage mail = mailSender.createMimeMessage();
+
+                    mail.setSubject("Athelier 인증메일");
+                    mail.setText(str, "UTF-8", "html");
+                    mail.addRecipient(Message.RecipientType.TO, new InternetAddress(member.getMemId()));
+                    mailSender.send(mail);
+
+                    int alert =1;
+                    mav.addObject("alertMessage",alert);
+                    mav.setViewName("MemJoin&Login");
+
+                }catch (Exception e){
+                    mav.setViewName("redirect:/MEM001");
+                }
+
             } else {
                 mav.setViewName("redirect:/MEM001");
             }
@@ -848,6 +872,11 @@ public class MemService {
                 sql+="MEMPROFILENAME = '"+profileName+"' WHERE MEMCODE = "+member.getMemCode();
                 mdao.sqlUpdate(sql);
 
+                session.invalidate();
+                // 회원 코드로 세션에 들어갈 값들 가져오기(회원과 권한이 조인된 뷰를 조회)
+                LoginDTO login = mdao.login(member.getMemCode());
+                session.setAttribute("login",login);
+
                 // 기존사진 삭제(디폴트 이미지가 아닐시)
                 if(!deleteImgName.equals("default.png")){
                     fish.fileDelete("fish/img/memProfileImg",deleteImgName);}
@@ -1031,4 +1060,34 @@ public class MemService {
         return result;
     }
 
+
+    //////////////////////////////////////////////////////////////////
+    // 휴면계정 전환
+    public ModelAndView MEM014(int memCode) {
+        mav = new ModelAndView();
+        MemberDTO member = mdao.MEM006(memCode);
+
+        try{
+            mdao.sqlUpdate("UPDATE MEMBER SET MEMSTATE = '휴면' WHERE MEMCODE = "+memCode);
+
+            // 상태변경 이메일 보내기
+            String str = "<h1>Athelier</h1>" +
+                    "<p>회원 상태가  휴면으로 변경 되었습니다.</p>" +
+                    "<p>다시 로그인시 인증메일이 발송 되오니 참고 바랍니다..</p>";
+
+            MimeMessage mail = mailSender.createMimeMessage();
+
+            mail.setSubject("Athelier 회원상태변경");
+            mail.setText(str, "UTF-8", "html");
+            mail.addRecipient(Message.RecipientType.TO, new InternetAddress(member.getMemId()));
+            mailSender.send(mail);
+            // 로그아웃 시키기
+            mav.setViewName("redirect:/MEM007");
+        }catch (Exception e){
+            e.printStackTrace();
+            System.out.println("휴면계정 전환 오류");
+            mav.setViewName("redirect:/PRO009?user="+memCode);
+        }
+        return mav;
+    }
 }

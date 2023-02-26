@@ -29,8 +29,7 @@ public class MemBoardDTO {
     private List imgname;
 
     //////////////////////////////////////////
-
-    private int memCode; // 회원 코드
+    
     private String memId; // 회원 아이디
     private String memName; // 회원 이름
 

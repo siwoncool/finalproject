@@ -47,6 +47,9 @@
     <script src="js/respond.min.js"></script>
     <![endif]-->
 
+    <script src="https://kit.fontawesome.com/8591377d67.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://kit.fontawesome.com/8591377d67.css" crossorigin="anonymous">
+
     <!-- Stylesheets -->
     <link rel="stylesheet" href="css/music/bootstrap.min.css"/>
     <link rel="stylesheet" href="css/music/font-awesome.min.css"/>
@@ -67,7 +70,35 @@
             margin-bottom: 0px;
             margin-top: 350px;
         }
+
+        .site-logo {
+            display: inline-block;
+            padding: 0;
+            /* padding: 44px 15px; */
+        }
+
     </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap');
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+    <style>
+        h1, h2, h3, h4, h5, h6, span, p, a, label, input, textarea, button {
+            font-family: 'Gowun Dodum', sans-serif !important;
+            font-size: large !important;
+            letter-spacing: 0rem; !important;
+        }
+
+        .btn-primary {
+            color: #000000;
+             background-color: #ffffff;
+        }
+
+    </style>
+
+    <link rel="stylesheet" href="css/modal.css">
 </head>
 <style th:replace="mouse.html :: style"></style>
 <body>
@@ -89,7 +120,18 @@
 
 				</span>
         </div>
+
+            <div class="col-md-6 col-md-offset-3 col-md-pull-3 animate-box" data-animate-effect="fadeInLeft">
+                <div class="container">
+                    <div id="get-in-touch" class="colorlib-bg-color" style="background-color: #FFFFFF">
+                        <p><a href="Dra_Write" style="border: 2px solid #FFC300" class="btn btn-primary btn-learn">게시글 생성</a></p>
+                    </div>
+                </div>
+            </div>
+
     </div>
+
+
 
     <div id="colorlib-main">
 
@@ -171,28 +213,31 @@
                         <use xlink:href="#select-arrow-down"></use>
                     </svg>
                 </label>
-
-                <li th:if="${paging.page <= 1}">[이전]</li>
+                <div className="row">
+                    <div class="col-md-12 animate-box" data-animate-effect="fadeInLeft" style="opacity: inherit; margin-top: 50px; margin-bottom: 50px;">
+                        <ul class="pagination">
+                            <li th:if="${paging.page <= 1}"><a>&laquo;</a></li>
                 <li th:if="${paging.page > 1}">
-                    <a th:href="@{DRA008(page=${paging.page -1} , limit=${paging.limit},category=${paging.category},cateCode=${paging.cateCode},orderby=${paging.orderby})}">[이전]</a>
+                    <a th:href="@{DRA008(page=${paging.page -1} , limit=${paging.limit},category=${paging.category},cateCode=${paging.cateCode},orderby=${paging.orderby})}">&laquo;</a>
                 </li>
                 &nbsp;
                 <!-- [페이지 번호] 페이지에 대한 처리 -->
                 <li th:each="i : ${#numbers.sequence(paging.startpage, paging.endpage)}">
+                    <a th:href="@{DRA008(page=${i} , limit=${paging.limit} ,category=${paging.category},cateCode=${paging.cateCode},orderby=${paging.orderby})}">
                                                 <span th:if="${paging.page == i}">
                                                     [[${i}]]
                                                 </span>
                     <span th:unless="${paging.page == i}">
-                                                    <a th:href="@{DRA008(page=${i} , limit=${paging.limit} ,category=${paging.category},cateCode=${paging.cateCode},orderby=${paging.orderby})}">[[${i}]]</a>
-                                                </span>
+                                                    [[${i}]]
+                    </span></a>
                 </li>
                 <!-- [다음] 페이지에 대한 처리 -->
                 &nbsp;
-                <li th:if="${paging.page >= paging.maxpage}">[다음]</li>
+                            <li th:if="${paging.page >= paging.maxpage}"><a>&raquo;</a></li>
                 <li th:if="${paging.page < paging.maxpage}">
-                    <a th:href="@{DRA008(page=${paging.page +1}, limit=${paging.limit},category=${paging.category},cateCode=${paging.cateCode},orderby=${paging.orderby})}">[다음]</a>
+                    <a th:href="@{DRA008(page=${paging.page +1}, limit=${paging.limit},category=${paging.category},cateCode=${paging.cateCode},orderby=${paging.orderby})}">&raquo;</a>
                 </li>
-
+                        </ul></div></div>
             </div>
 
         </section>
@@ -202,6 +247,9 @@
 <input type="hidden" id="category" th:value="${paging.category}">
 <!-- Songs section end -->
 <!--DDAN 서브카테고리 가져오기-->
+
+<script src="js/modal.js"></script>
+
 <script src="https://code.jquery.com/jquery-3.6.3.js" integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM=" crossorigin="anonymous"></script>
 <script>
 

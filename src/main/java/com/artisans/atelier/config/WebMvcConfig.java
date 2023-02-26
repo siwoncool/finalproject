@@ -12,6 +12,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/static/PSW/imsi/**")
-                .addResourceLocations("file:///C:\\Users\\user\\Desktop\\atelier\\src\\main\\resources\\static/PSW/imsi/");
+                .addResourceLocations("file:///C:\\Users\\user\\Desktop\\IntelliJworkspace\\atelier\\src\\main\\resources\\static/PSW/imsi/");
     }
 }

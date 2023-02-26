@@ -13,6 +13,9 @@
 
     <link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500,700" rel="stylesheet">
 
+    <script src="https://kit.fontawesome.com/8591377d67.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://kit.fontawesome.com/8591377d67.css" crossorigin="anonymous">
+
     <!-- Animate.css -->
     <link rel="stylesheet" href="css/main/animate.css">
     <!-- Icomoon Icon Fonts-->
@@ -46,6 +49,23 @@
     <script src="js/respond.min.js"></script>
     <![endif]-->
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap');
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+    <style>
+        h1, h2, h3, h4, h5, h6, span, p, a, label, input, textarea, button {
+            font-family: 'Gowun Dodum', sans-serif !important;
+            font-size: large !important;
+            letter-spacing: 0rem; !important;
+        }
+    </style>
+
+    <link rel="stylesheet" href="css/modal.css">
+
+
 </head>
 <style th:replace="mouse.html :: style"></style>
 <body>
@@ -57,125 +77,148 @@
     <div id="colorlib-main">
         <div class="colorlib-blog">
             <div class="colorlib-narrow-content">
-                <div class="col-md-6 col-md-offset-3 col-md-pull-3 animate-box" data-animate-effect="fadeInLeft">
-                    <th:block th:if="${researchType eq 'work'}">
+
+                <th:block th:if="${researchType eq 'work'}">
+                    <div class="col-md-6 col-md-offset-3 col-md-pull-3 animate-box" data-animate-effect="fadeInLeft">
                         <h4 class="colorlib-heading">워크스페이스 <span th:text="${paging.search}">검색어</span> 검색결과</h4>
-                </div>
-                <div class="row">
-                    <div th:each="wlist : ${SearchList}">
-                        <div class="col-md-4 col-sm-6 animate-box" data-animate-effect="fadeInLeft" style="width: 400px; height: 750px; margin-left: 75px">
-                            <div class="blog-entry" style="width: 400px;height: 750px">
-                                <a th:href="@{WOR4(workCode=${wlist.workCode}, category=${wlist.category})}" class="blog-img"><img th:src="@{junho/workSpaceImg/{img}(img=${wlist.workImgName})}" style="width: 300px; height: 300px;" width="300px" height="280px" class="img-responsive" alt="HTML5 Bootstrap Template by colorlib.com"></a>
-                                <div class="desc">
-                                    <span><small>[[${wlist.memName}]] </small> | <small>[[${wlist.memGrade}]]</small> | <small> <i class="icon-bubble3"></i></small></span>
-                                    <span>[[${wlist.workTitle}]]</span><span style="display: flex" th:text="${wlist.workTag}" class="reTag"></span>
-                                    <small>게시글 좋아요 수 :[[${wlist.likeNum}]]</small> |<small> 댓글 :[[${wlist.comentNum}]]</small> |<small> 조회수 : [[${wlist.HitNum}]]</small> |<small> 게시글 : [[${wlist.BoardNum}]]</small> |
-                                    <h3><a th:href="@{WOR4(workCode=${wlist.workCode})}">[[${wlist.workTitle}]]</a></h3>
+                    </div>
+                    <div class="row">
+                        <div th:each="wlist : ${SearchList}">
+                            <div class="col-md-4 col-sm-6 animate-box" data-animate-effect="fadeInLeft"
+                                 style="width: 400px; height: 750px; margin-left: 75px">
+                                <div class="blog-entry" style="width: 400px;height: 750px">
+                                    <a th:href="@{WOR4(workCode=${wlist.workCode}, category=${wlist.category})}"
+                                       class="blog-img"><img
+                                            th:src="@{junho/workSpaceImg/{img}(img=${wlist.workImgName})}"
+                                            style="width: 300px; height: 300px;" width="300px"
+                                            height="280px" class="img-responsive"
+                                            alt="HTML5 Bootstrap Template by colorlib.com"></a>
+                                    <div class="desc">
+                                    <span><small>[[${wlist.memName}]] </small> | <small>[[${wlist.memGrade}]]</small> | <small> <i
+                                            class="icon-bubble3"></i></small></span>
+                                        <span>[[${wlist.workTitle}]]</span><span style="display: flex"
+                                                                                 th:text="${wlist.workTag}"
+                                                                                 class="reTag"></span>
+                                        <small>💓 :[[${wlist.likeNum}]]</small> |<small> 댓글
+                                        💬 :[[${wlist.comentNum}]]</small> |<small> 👤 : [[${wlist.HitNum}]]</small>
+                                        |<small>
+                                        📒 : [[${wlist.BoardNum}]]</small> |
+                                        <h3><a th:href="@{WOR4(workCode=${wlist.workCode})}">[[${wlist.workTitle}]]</a>
+                                        </h3>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
 
-<!--                    <tr th:each="wlist: ${SearchList}">-->
-<!--                        <td th:text="${wlist.workTag}" class="reTag"></td>-->
-<!--                        <td><a th:text="${wlist.memName}"></a></td>-->
-<!--                        <td><a th:href="@{WOR4(workCode = ${wlist.workCode})}" th:text="${wlist.workTitle}"></a></td>-->
-<!--                        <td th:text="${wlist.workIntro}">설명</td>-->
-<!--                        <td><img th:src="@{junho/workSpaceImg/{img}(img=${wlist.workImgName})}" width="100px"-->
-<!--                                 height="120px"></td>-->
-<!--                        <td th:text="${wlist.BoardNum}">갯수</td>-->
-<!--                        <td th:text="${wlist.likeNum}">좋아요갯수</td>-->
-<!--                        <td th:text="${wlist.comentNum}">댓글갯수</td>-->
-<!--                        <td th:text="${wlist.HitNum}">조회수</td>-->
-<!--                    </tr>-->
-                <div class="row">
-                    <div class="col-md-12 animate-box" data-animate-effect="fadeInLeft">
-                        <ul class="pagination">
-                            <li th:if="${paging.page <= 1}"><a>[이전]</a></li>
-                <li th:if="${paging.page > 1}">
-                    <a th:href="@{UnifiedSearchMore(page=${paging.page -1} , limit=${paging.limit}, q=${paging.search}, type=${researchType})}">[이전]</a>
-                </li>
-                &nbsp;
-                <!-- [페이지 번호] 페이지에 대한 처리 -->
-                <li th:each="i : ${#numbers.sequence(paging.startpage, paging.endpage)}">
+                    <!--                    <tr th:each="wlist: ${SearchList}">-->
+                    <!--                        <td th:text="${wlist.workTag}" class="reTag"></td>-->
+                    <!--                        <td><a th:text="${wlist.memName}"></a></td>-->
+                    <!--                        <td><a th:href="@{WOR4(workCode = ${wlist.workCode})}" th:text="${wlist.workTitle}"></a></td>-->
+                    <!--                        <td th:text="${wlist.workIntro}">설명</td>-->
+                    <!--                        <td><img th:src="@{junho/workSpaceImg/{img}(img=${wlist.workImgName})}" width="100px"-->
+                    <!--                                 height="120px"></td>-->
+                    <!--                        <td th:text="${wlist.BoardNum}">갯수</td>-->
+                    <!--                        <td th:text="${wlist.likeNum}">좋아요갯수</td>-->
+                    <!--                        <td th:text="${wlist.comentNum}">댓글갯수</td>-->
+                    <!--                        <td th:text="${wlist.HitNum}">조회수</td>-->
+                    <!--                    </tr>-->
+                    <div class="row">
+                        <div class="col-md-12 animate-box" data-animate-effect="fadeInLeft">
+                            <ul class="pagination">
+                                <li th:if="${paging.page <= 1}"><a>[이전]</a></li>
+                                <li th:if="${paging.page > 1}">
+                                    <a th:href="@{UnifiedSearchMore(page=${paging.page -1} , limit=${paging.limit}, q=${paging.search}, type=${researchType})}">[이전]</a>
+                                </li>
+                                &nbsp;
+                                <!-- [페이지 번호] 페이지에 대한 처리 -->
+                                <li th:each="i : ${#numbers.sequence(paging.startpage, paging.endpage)}">
                                                 <span th:if="${paging.page == i}">
                                                     [[${i}]]
                                                 </span>
-                    <span th:unless="${paging.page == i}">
+                                    <span th:unless="${paging.page == i}">
                                                     <a th:href="@{UnifiedSearchMore(page=${i} , limit=${paging.limit} ,q=${paging.search}, type=${researchType})}">[[${i}]]</a>
                                                 </span>
-                </li>
-                <!-- [다음] 페이지에 대한 처리 -->
-                &nbsp;
-                            <li th:if="${paging.page >= paging.maxpage}"><a>[다음]</a></li>
-                <li th:if="${paging.page < paging.maxpage}">
-                    <a th:href="@{UnifiedSearchMore(page=${paging.page +1}, limit=${paging.limit},q=${paging.search}, type=${researchType})}">[다음]</a>
-                </li>
-                        </ul>
-                        </th:block>
+                                </li>
+                                <!-- [다음] 페이지에 대한 처리 -->
+                                &nbsp;
+                                <li th:if="${paging.page >= paging.maxpage}"><a>[다음]</a></li>
+                                <li th:if="${paging.page < paging.maxpage}">
+                                    <a th:href="@{UnifiedSearchMore(page=${paging.page +1}, limit=${paging.limit},q=${paging.search}, type=${researchType})}">[다음]</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </th:block>
+
 
                 <th:block th:if="${researchType eq 'board'}">
-                    <h4 class="colorlib-heading">게시물 <span th:text="${paging.search}">검색어</span> 검색결과</h4>
+                    <h4 class="colorlib-heading">게시물 <span>[[${paging.search}]]</span> 검색결과</h4>
 
-                        <div class="row row-bottom-padded-md">
-                            <div th:each="blist: ${SearchList}">
-<!--                                <div class="col-md-4 animate-box" data-animate-effect="fadeInLeft">-->
-<!--                                    <a th:attr="onclick=|checkLiterature('${blist.boaCode}','${blist.category}')|" ><div class="project">-->
-<!--                                        <img th:href="@{DRA004(boaCode = ${blist.boaCode})}"-->
-<!--                                             th:src="@{PSW/bestimg/{img1}(img1=${blist.boaBestImg})}"-->
-<!--                                             style="width: 100%;height: 100%">-->
-<!--                                        <div class="desc">-->
-<!--                                            <div class="con">-->
-<!--                                                <h3 style="color: #FFFFFF" th:text="${blist.boaTitle}"></h3>-->
-<!--                                                <span th:text="${blist.memName}"></span>-->
-<!--                                                <p class="icon">-->
-<!--                                                    <span><i class="icon-eye">[[${blist.boaHit}]]</i></span>-->
-<!--                                                    <span><i class="icon-heart">[[${blist.likeNum}]]</i></span>-->
-<!--                                                    <span><i class="icon-reply2">[[${blist.comentNum}]]</i></span>-->
-<!--                                                </p>-->
-<!--                                            </div>-->
-<!--                                        </div>-->
-<!--                                    </div></a>-->
-<!--                                </div>-->
-<!--                            </div>-->
+                    <div class="row row-bottom-padded-md">
+                        <div th:each="clist: ${SearchList}">
+                            <div class="col-md-4 animate-box" data-animate-effect="fadeInLeft">
+                                <a th:attr="onclick=|checkLiterature('${clist.boaCode}','${clist.category}')|" >
+                                    <div class="project">
+                                    <img th:href="@{DRA004(boaCode = ${clist.boaCode})}"
+                                         th:src="@{PSW/bestimg/{img1}(img1=${clist.boaBestImg})}"
+                                         style="width: 100%;height: 100%">
+                                    <div class="desc">
+                                        <div class="con">
+                                            <h3 style="color: #FFFFFF" th:text="${clist.boaTitle}"></h3>
+                                            <span th:text="${clist.memName}"></span>
+                                            <span th:text="${clist.category}"></span>
+                                            <span th:text="${clist.boaTag}"></span>
+                                            <p class="icon">
+                                                <span><i class="icon-eye">[[${clist.boaHit}]]</i></span>
+                                                <span><i class="icon-heart">[[${clist.likeNum}]]</i></span>
+                                                <span><i class="icon-reply2">[[${clist.comentNum}]]</i></span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                </a></div>
                         </div>
 
-                        </tr>
-                        <tr th:each="blist: ${SearchList}">
-                            <td th:text="${blist.boaTag}" class="reTag">태그</td>
-                            <td th:text="${blist.memName}"></td>
-                            <td><a th:href="@{DRA004(boaCode = ${blist.boaCode})}" th:text="${blist.boaTitle}"></a></td>
-                            <td th:text="${blist.boaHit}">조회수</td>
-                            <td th:text="${blist.likeNum}">좋아요갯수</td>
-                            <td th:text="${blist.comentNum}">댓글갯수</td>
-                            <td><img th:src="@{PSW/bestimg/{img1}(img1=${blist.boaBestImg})}" width="100px"
-                                     height="120px"></td>
-                        </tr>
 
-
-                    <li th:if="${paging.page <= 1}">[이전]</li>
-                    <li th:if="${paging.page > 1}">
-                        <a th:href="@{UnifiedSearchMore(page=${paging.page -1} , limit=${paging.limit},q=${paging.search}, type=${researchType})}">[이전]</a>
-                    </li>
-                    &nbsp;
-                    <!-- [페이지 번호] 페이지에 대한 처리 -->
-                    <li th:each="i : ${#numbers.sequence(paging.startpage, paging.endpage)}">
-                                                <span th:if="${paging.page == i}">
-                                                    [[${i}]]
+<!--                    <table>-->
+<!--                        <tr th:each="clist: ${SearchList}">-->
+<!--                            <td th:text="${clist.boaTag}" class="reTag">태그</td>-->
+<!--                            <td th:text="${clist.memName}"></td>-->
+<!--                            <td><a th:href="@{DRA004(boaCode = ${clist.boaCode})}" th:text="${clist.boaTitle}"></a>-->
+<!--                            </td>-->
+<!--                            <td th:text="${clist.boaHit}">조회수</td>-->
+<!--                            <td th:text="${clist.likeNum}">좋아요갯수</td>-->
+<!--                            <td th:text="${clist.comentNum}">댓글갯수</td>-->
+<!--                            <td><img th:src="@{PSW/bestimg/{img1}(img1=${clist.boaBestImg})}" width="100px"-->
+<!--                                     height="120px"></td>-->
+<!--                        </tr>-->
+<!--                    </table>-->
+                    <div class="row">
+                        <div class="col-md-12 animate-box" data-animate-effect="fadeInLeft">
+                            <ul class="pagination">
+                                <li th:if="${paging.page <= 1}"><a>[이전]</a></li>
+                        <li th:if="${paging.page > 1}">
+                            <a th:href="@{UnifiedSearchMore(page=${paging.page -1} , limit=${paging.limit},q=${paging.search}, type=${researchType})}">[이전]</a>
+                        </li>
+                        &nbsp;
+                        <!-- [페이지 번호] 페이지에 대한 처리 -->
+                        <li th:each="i : ${#numbers.sequence(paging.startpage, paging.endpage)}">
+                            <a th:href="@{UnifiedSearchMore(page=${i} , limit=${paging.limit} ,q=${paging.search}, type=${researchType})}"><span th:if="${paging.page == i}">
+                                                        [[${i}]]
                                                 </span>
-                        <span th:unless="${paging.page == i}">
-                                                    <a th:href="@{UnifiedSearchMore(page=${i} , limit=${paging.limit} ,q=${paging.search}, type=${researchType})}">[[${i}]]</a>
-                                                </span>
-                    </li>
-                    <!-- [다음] 페이지에 대한 처리 -->
-                    &nbsp;
-                    <li th:if="${paging.page >= paging.maxpage}">[다음]</li>
-                    <li th:if="${paging.page < paging.maxpage}">
-                        <a th:href="@{UnifiedSearchMore(page=${paging.page +1}, limit=${paging.limit},q=${paging.search}, type=${researchType})}">[다음]</a>
-                    </li>
-
+                            <span th:unless="${paging.page == i}">
+                                                        [[${i}]]
+                            </span></a>
+                        </li>
+                        <!-- [다음] 페이지에 대한 처리 -->
+                        &nbsp;
+                                <li th:if="${paging.page >= paging.maxpage}"><a>[다음]</a></li>
+                        <li th:if="${paging.page < paging.maxpage}">
+                            <a th:href="@{UnifiedSearchMore(page=${paging.page +1}, limit=${paging.limit},q=${paging.search}, type=${researchType})}">[다음]</a>
+                        </li>
+                    </ul>
                 </th:block>
 
                 <!-- jQuery -->
@@ -198,13 +241,18 @@
 
                 <!-- MAIN JS -->
                 <script src="js/main.js"></script>
-
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
-    </div>
-</div>
+
+<script src="js/modal.js"></script>
+
+<block th:if="${session.login ne null}">
+    <input type="hidden" id="loginId" th:value="${session.login.memCode}">
+</block>
 </body>
 <!--cdn-->
 <!--<script src="https://code.jquery.com/jquery-3.6.3.js" integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM="-->
@@ -222,6 +270,67 @@
             input += "<a href='UnifiedSearch?q=" + tagArr[j].replace('#', '%23') + "'>" + tagArr[j] + "</a>" + "<br/>";
         }
         $(retag[i]).html(input);
+    }
+
+
+    // 문학 게시글 페이
+
+    let memCode = $('#loginId').val();
+
+    function checkLiterature(boaCode, category) {
+        console.log(boaCode);
+        console.log(category);
+        console.log(memCode);
+
+        if (category == "문학") {
+            $.ajax({
+                type: 'post',
+                url: 'ajaxPayAndCheck',
+                data: {
+                    "boaCode": boaCode,
+                    "memCode": memCode
+                },
+                dataType: "text",
+                success:
+                    function (result) {
+                        if (result != null) {
+                            // result 0이면 꽁자, 가격이 나오면 이면 이미 결제해야함
+                            // 사용할 수 있는 아이디
+                            console.log("result!=null")
+                            console.log("가격은?" + result);
+                            if (result == 0) {
+                                checkLoginNow();
+                            } else if (result == 1) {
+                                location.href = "DRA004?boaCode=" + boaCode;
+                            } else {
+                                checkIdAndPay(result);
+                            }
+                        } else {
+                            // 사용할 수 없는 아이디
+                            console.log("result==null")
+                        }
+                    },
+                error: function () {
+                    alert('ajaxPayAndCheck 실패');
+                }
+            })
+        } else {
+            location.href = "DRA004?boaCode=" + boaCode;
+        }
+
+        function asd() {
+            console.log("이게 되나 시발???" + boaCode);
+        }
+
+        function checkIdAndPay(price) {
+            if (!confirm("이 게시글의 가격은 " + price + "입니다 읽으시겠습니까?.")) {
+                /*비동의*/
+                alert("취소(아니오)를 누르셨습니다.");
+            } else {
+                /*동의*/
+                checkLoginNow();
+            }
+        }
     }
 
 </script>

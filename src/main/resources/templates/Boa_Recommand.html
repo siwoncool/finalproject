@@ -46,6 +46,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
 
+    <script src="https://kit.fontawesome.com/8591377d67.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://kit.fontawesome.com/8591377d67.css" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="css/modal.css">
 
     <!--모달 css-->
     <style>
@@ -102,10 +106,17 @@
 
 
 </head>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap');
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
 <style>
     h1, h2, h3, h4, h5, h6, span, p, a, label, input, textarea, button {
         font-family: 'Gowun Dodum', sans-serif !important;
         font-size: large !important;
+        letter-spacing: 0rem; !important;
     }
 </style>
 <style th:replace="mouse.html :: style"></style>
@@ -128,9 +139,8 @@
                                  data-animate-effect="fadeInLeft">
                                 <div class="container">
                                     <div class="category-links" style="text-align: left">
-                                        <a href='javascript:void(0);' onclick="workspace()"
-                                           style="color : #e91e63;">일반추천</a>
-                                        <a href='javascript:void(0);' onclick="board()">태그기반추천</a>
+                                        <a href='javascript:void(0);' onclick="changeROT('일반')">일반추천</a>
+                                        <a href='javascript:void(0);' onclick="changeROT('태그')">태그기반추천</a>
                                     </div>
                                 </div>
                             </div>
@@ -179,6 +189,7 @@
 </div>
 <div id="endWorkspaceBoard"></div>
 </body>
+<script src="js/modal.js"></script>
 <script>
     // 회원코드
     let memCode = "[[${session.login.memCode}]]";
@@ -198,6 +209,23 @@
     // 처음 페이지 실행시 보드 불러오기
     getBoard();
 
+    function changeROT(input){
+        if(input=='일반'){
+            $("#workspaceBoard").html("");
+            urlType = "RegularRecommand";
+            ROT = true;
+            page = 1;
+            endPage = 0;
+            getBoard();
+        }else if(input=='태그'){
+            $("#workspaceBoard").html("");
+            urlType = "TagRecommand";
+            ROT = false;
+            page = 1;
+            endPage = 0;
+            getBoard();
+        }
+    }
 
     // 게시물 불러오기
     function getBoard() {
@@ -214,13 +242,19 @@
                 console.log(result[0]);
                 console.log(result[1]);
 
-                page = result[0].page;
-                endPage = result[0].endpage;
+                if(ROT){    // 일반 추천
+                    page = result[0].page;
+                    endPage = result[0].endpage;
+                    innerBoard(result[1]);
+                }else{      // 태그 중심 추천
+                    innerBoard(result);
+                }
+
 
                 //console.log("바뀐 page:"+page);
                 //console.log("현재페이지"+(page-1));
                 //console.log("바뀐 endPage:"+endPage);
-                innerBoard(result[1]);
+
             },
             error: function () {
                 alert("통신실패");
@@ -235,15 +269,19 @@
 
         for (let i in result) {
             output +=
-                "<div class=\"col-md-3 animate-box\" data-animate-effect=\"fadeInLeft\" style='width: 80%; height: 1000px;'>" +
-                "<div class=\"project\" style=\"background-image: url(PSW/bestimg/" + result[i].boaBestImg + "); height: 100%;\">" +
+                "<div class=\"col-md-3 animate-box\" data-animate-effect=\"fadeInLeft\" style='width: 32%; height: 500px;'>" +
+                "<div class=\"project\" style=\"background-image: url(PSW/bestimg/" + result[i].boaBestImg + "); height: 90%;\">" +
                 "<div class=\"desc\">" +
                 "<a href='DRA004?boaCode=" + result[i].boaCode + "'>" +
                 "<div style='width: 100%; height: 100%;' class=\"con\">" +
 
-                "<strong style='font-size: 80px;'>" + result[i].boaTitle + "</strong>" +
+                "<span>" + result[i].boaTitle + "</span>" +
+                "</br>" +
+                "<span>" + result[i].memName + "</span>" +
+                "<span>" + result[i].boaTag + "</span>" +
                 "<p class=\"icon\">" +
-                "<span style='font-size: 80px;'><i class=\"icon-eye\"></i> " + result[i].boaHit + "</span>" +
+                "<span><i class=\"icon-eye\"></i> " + result[i].boaHit + "</span>" +
+                "<span><i class=\"icon-heart\"></i>" + result[i].likeNum +  "</span>" +
                 "</p>" +
 
                 "</div>" +
@@ -274,7 +312,7 @@
                     urlType = "RegularRecommand";
                     getBoard();
                 }else{
-                    // 태그중심추천
+                    // 태그 중심 추천은 처음 값만 적용 -> 데이터 베이스 조회에 시간이 걸리기 때문
                 }
 
             }

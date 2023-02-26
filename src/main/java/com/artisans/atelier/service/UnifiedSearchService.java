@@ -50,9 +50,9 @@ public class UnifiedSearchService {
             mav.setViewName("Pro_Search");
 
         }else{  // 워크스페이스, 게시글 검색
-            String boardFirstSql = "SELECT * FROM (SELECT * FROM finalBoardList WHERE ";
+            String boardFirstSql = "SELECT * FROM (SELECT * FROM finalBoardList ";
             String boardLastSql = " ORDER BY LIKENUM DESC, BOAHIT DESC, COMENTNUM DESC ) WHERE ROWNUM <=8 ";
-            String WorkFirstSql = "SELECT * FROM (SELECT * FROM finalWorkSpaceList  WHERE ";
+            String WorkFirstSql = "SELECT * FROM (SELECT * FROM finalWorkSpaceList ";
             String WorkLastSql = " ORDER BY LIKENUM DESC, HITNUM DESC, COMENTNUM DESC ) WHERE ROWNUM <=5 ";
 
             // 검색 sql
@@ -79,10 +79,10 @@ public class UnifiedSearchService {
                     if(first){
                         first = false;
                     }else if(second){
-                        sql +=" BOATAG LIKE '%#"+wo+",%' OR BOATAG LIKE '%,#"+wo+"'";
-                        sql2 += " BOATAG LIKE '%#"+wo+"%'";
-                        sql3 +=" WORKTAG LIKE '%#"+wo+",%' OR WORKTAG LIKE '%,#"+wo+"'  ";
-                        sql4 +=" WORKTAG LIKE '%#"+wo+"%'";
+                        sql +=" WHERE BOATAG LIKE '%#"+wo+",%' OR BOATAG LIKE '%,#"+wo+"'";
+                        sql2 += " WHERE BOATAG LIKE '%#"+wo+"%'";
+                        sql3 +=" WHERE WORKTAG LIKE '%#"+wo+",%' OR WORKTAG LIKE '%,#"+wo+"'  ";
+                        sql4 +=" WHERE WORKTAG LIKE '%#"+wo+"%'";
                         second = false;
                     }else{
                         sql +=" OR BOATAG LIKE '%#"+wo+",%' OR BOATAG LIKE '%,#"+wo+"' ";
@@ -100,9 +100,9 @@ public class UnifiedSearchService {
                 for (String wo : words){
                     //System.out.println(wo);
                     if(first){
-                        sql +=" boatitle LIKE '%"+wo+"%' ";
+                        sql +="WHERE boatitle LIKE '%"+wo+"%' ";
                         sql2 =sql;
-                        sql3 +=" worktitle LIKE '%"+wo+"%' ";
+                        sql3 +="WHERE worktitle LIKE '%"+wo+"%' ";
                         sql4 =sql3;
                         first = false;
                     }else{
@@ -320,7 +320,7 @@ public class UnifiedSearchService {
 
             }else if(type.equals("board")){ // 보드 게시글 조회
                 sql ="SELECT finalBoardList.*, ROW_NUMBER() OVER (ORDER BY case when ( ";
-
+                //System.out.println("진짜 제발 보드 인식 한번만 해줘라 형 힘들다 어>?");
                 for (String wo : words) {
                     if(first) {
                         where +=" BOATITLE LIKE '%"+wo+"%' ";
@@ -338,14 +338,17 @@ public class UnifiedSearchService {
                 PageDTO paging = fish.paging(page, limit, count);
                 sql ="SELECT * FROM ( "+sql+" ) WHERE RN BETWEEN #{startRow} AND #{endRow}";
                 paging.setSql(sql);
-                List<MemWorkSpaceDTO> SearchList = sdao.WorkMoreSearch(paging);
-                //System.out.println(SearchList);
+                List<MemBoardDTO> SearchList = sdao.BoardMoreSearch(paging);
+                System.out.println(SearchList);
+                System.out.println(type);
+
                 paging.setSearch(search);
                 mav.addObject("paging",paging);
                 mav.addObject("SearchList",SearchList);
             }
 
         }
+
 
         mav.addObject("researchType",type);
         //UnifiedSearch_ListMore
@@ -391,10 +394,11 @@ public class UnifiedSearchService {
         List<Object> result = new ArrayList<>();
         int count = mdao.everyCount("SELECT count(*) FROM BOARD BO INNER JOIN FOLLOW FO ON BO.BOAMEMCODE = fo.follower WHERE FO.FOLLOWING = "+memCode+" AND BOACODE NOT IN (SELECT BHBOACODE FROM boardhistory WHERE BHMEMCODE = FO.FOLLOWING)");
         PageDTO paging = fish.paging(page,12,count);
-        paging.setSql("SELECT * FROM (SELECT BO.*, ROW_NUMBER() OVER(ORDER BY bo.boadate DESC) AS RN FROM BOARD BO INNER JOIN FOLLOW FO ON BO.BOAMEMCODE = fo.follower WHERE FO.FOLLOWING = "+memCode+" AND BOACODE NOT IN (SELECT BHBOACODE FROM boardhistory WHERE BHMEMCODE = FO.FOLLOWING))WHERE RN BETWEEN #{startRow} AND #{endRow}");
+        paging.setSql("SELECT * FROM (SELECT BO.*, ROW_NUMBER() OVER(ORDER BY bo.boadate DESC) AS RN FROM finalboardList BO INNER JOIN FOLLOW FO ON BO.BOAMEMCODE = fo.follower WHERE FO.FOLLOWING = "+memCode+" AND BOACODE NOT IN (SELECT BHBOACODE FROM boardhistory WHERE BHMEMCODE = FO.FOLLOWING))WHERE RN BETWEEN #{startRow} AND #{endRow}");
 
         // 게시물 가져오기
         List<MemBoardDTO> boardList =  mdao.ProfileBoard(paging);
+        System.out.println(boardList);
         // sql 숨기기
         paging.setSql(null);
         // 다음페이지로 셋팅
@@ -427,5 +431,100 @@ public class UnifiedSearchService {
         result.add(boardList);
         return result;
     }
+
+    // 태그 중심 추천
+    public List<MemBoardDTO> TagRecommand(int memCode, int page) {
+        List<String> tags = sdao.TagRecommand(memCode);
+        //System.out.println(tags);
+        //System.out.println(tags.size());
+
+        List<String> tags2 = new ArrayList<>();
+        for (int i=0; i<tags.size(); i++){
+            tags2.addAll(List.of(tags.get(i).split(",")));
+        }
+
+        System.out.println(tags2);
+
+        // 태그 크기
+        int tagSize = tags2.size();
+        // 반복문 메소드
+        boolean run = true;
+
+        int tagNum1 = 0;
+        int tagNum2 = 0;
+        int tagNum3 = 0;
+
+        // 태그가 한개 이상일떄,
+        if (tagSize >= 1) {
+            tagNum1 = (int) (Math.random() * tagSize);
+        }
+
+        //태그가 2개 이상일때,
+        if (tagSize >= 2) {
+            while (run) {
+                //System.out.println("태그 2개 이상일때 while문");
+                tagNum2 = (int) (Math.random() * tagSize);
+                if (tagNum1 != tagNum2) {
+                    run = false;
+                }
+            }
+        }
+        // 태그가 3개 이상일떄
+        if (tagSize >= 3) {
+            run = true;
+            while (run) {
+                //System.out.println("태그 3개 이상일때 while문");
+                tagNum3 = (int) (Math.random() * tagSize);
+                if (tagNum3 != tagNum1 && tagNum3 != tagNum2) {
+                    run = false;
+                }
+            }
+        }
+        //System.out.println("태그1넘버:"+tagNum1+"태그2넘버:"+tagNum2+"태그3넘버:"+tagNum3);
+
+        // 랜덤으로 뽑은 태그들 추출
+        String tag1 = "";
+        String tag2 = "";
+        String tag3 = "";
+
+        if (tagSize == 1) {
+            tag1 = tags2.get(tagNum1);
+
+        } else if (tagSize == 2) {
+            tag1 = tags2.get(tagNum1);
+            tag2 = tags2.get(tagNum2);
+        } else if(tagSize >=3) {
+            tag1 = tags2.get(tagNum1);
+            tag2 = tags2.get(tagNum2);
+            tag3 = tags2.get(tagNum3);
+        }
+        //System.out.println("태그1"+tag1+"태그2"+tag2+"태그3"+tag3);
+
+
+        // sql like문 작성
+        String likesql = "";
+        if (tagSize == 1) {
+            likesql = " AND ((BOATAG LIKE '%" + tag1 + "%'))";
+        } else if (tagSize == 2) {
+            likesql = " AND ((BOATAG LIKE '%" + tag1 + "%')";
+            likesql +=" OR (BOATAG LIKE '%" + tag2 + "%' ))";
+        } else if (tagSize >= 3) {
+            likesql = " AND ( (BOATAG LIKE '%" + tag1 + "%')";
+            likesql +=" OR (BOATAG LIKE '%" + tag2 + "%')";
+            likesql += " OR (BOATAG LIKE '%" + tag3 + "%'))";
+            //System.out.println("태그 3개 이상");
+        }
+
+        int count = mdao.everyCount("SELECT count(*) FROM FINALBOARDLIST fi WHERE BOAMEMCODE != " + memCode + " AND BOACODE NOT IN (SELECT BHBOACODE FROM boardhistory  WHERE BHMEMCODE = " + memCode + ")  "+likesql+"  ORDER BY boadate DESC");
+        //System.out.println("조건에 맞는 게시글 갯수:"+count);
+        PageDTO paging = fish.paging(1, 10, count);
+        paging.setSql("SELECT * FROM(SELECT fi.*, ROW_NUMBER() OVER(ORDER BY fi.boadate DESC) AS RN FROM FINALBOARDLIST fi WHERE BOAMEMCODE != " + memCode + " AND BOACODE NOT IN (SELECT BHBOACODE FROM boardhistory  WHERE BHMEMCODE = " + memCode + ") "+likesql+") WHERE RN BETWEEN #{startRow} AND #{endRow}");
+        List<MemBoardDTO> boardList = mdao.ProfileBoard(paging);
+
+        //System.out.println("태그기반 추천 끝");
+
+        return boardList;
+    }
+
 
 }

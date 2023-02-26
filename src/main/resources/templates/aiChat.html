@@ -65,7 +65,8 @@
         .mine {
             margin-left: auto;
         }
-        .input-Area{
+
+        .input-Area {
             margin: auto;
             width: 30%;
         }
@@ -78,7 +79,6 @@
             width: 50%;
             border-radius: 10px;
             box-shadow: 5px 5px 15px rgba(119, 119, 119, 0.5);
-            overflow-y: scroll;
         }
 
         .top-bar {
@@ -97,6 +97,7 @@
             top: 11px;
             left: 15px;
         }
+
         .avatar p {
             color: #F9FBFF;
             margin: 7px 12px;
@@ -121,6 +122,7 @@
             height: 20px;
             cursor: pointer;
         }
+
         .menu:hover {
             transform: scale(1.1);
             transition: all 0.3s ease-in;
@@ -134,10 +136,12 @@
             right: 21px;
             cursor: pointer;
         }
+
         .icons .fas {
             padding: 5px;
             opacity: 0.8;
         }
+
         .icons .fas:hover {
             transform: scale(1.1);
             transition: all 0.3s ease-in;
@@ -158,6 +162,7 @@
             opacity: 0.9;
             top: 60px;
             height: 88%;
+            overflow-y: scroll;
         }
 
         .incoming {
@@ -165,6 +170,7 @@
             height: 100%;
             padding: 20px;
         }
+
         .incoming .bubble {
             background: #b2b2b2;
         }
@@ -174,6 +180,7 @@
             top: 67%;
             left: 20px;
         }
+
         .typing .bubble {
             background: #eaeaea;
             padding: 8px 13px 9px 13px;
@@ -221,6 +228,7 @@
             width: 90%;
             height: 100%;
         }
+
         .outgoing .bubble {
             background: #79C7C5;
             float: right;
@@ -270,6 +278,7 @@
             cursor: pointer;
             outline: 0;
         }
+
         button:hover {
             transform: scale(1.1);
             transition: all 0.3s ease-in-out;
@@ -284,15 +293,18 @@
             font-size: 0.7em;
             padding: 10px;
         }
+
         footer p {
             color: #79C7C5;
             text-transform: uppercase;
             letter-spacing: 2px;
         }
+
         footer a {
             color: #F9FBFF;
             text-decoration: none;
         }
+
         footer a:hover {
             color: #A1E2D9;
         }
@@ -312,17 +324,111 @@
                 opacity: 0.5;
             }
         }
+
+        /* 슬라이더 주변 상자 */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+
+        /* HTML 기본 체크박스 숨기기 */
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        /* 슬라이더 효과 */
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px #2196F3;
+        }
+
+        input:checked + .slider:before {
+            -webkit-transform: translateX(26px);
+            -ms-transform: translateX(26px);
+            transform: translateX(26px);
+        }
+
+        /* 둥근스위치버튼 스타일 및 효과 */
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
     </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap');
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+    <style>
+        h1, h2, h3, h4, h5, h6, span, p, a, label, input, textarea, button {
+            font-family: 'Gowun Dodum', sans-serif !important;
+            font-size: large !important;
+            letter-spacing: 0rem;
+        !important;
+        }
+    </style>
+    <link rel="stylesheet" href="css/modal.css">
 </head>
 
 <style th:replace="mouse.html :: style"></style>
 <body style="background-image: url('/img/4.jpg')">
 
-    <header th:replace="sider.html :: header"></header>
+<header th:replace="sider.html :: header"></header>
 
 <div class="chatbox animate-box" data-animate-effect="fadeInLeft">
-    <div class="top-bar">
-        <div class="name">AI 채팅 기능</div>
+    <div class="top-bar" style="">
+        <div class="name" style="width: 90%;">
+            <ul style="float: left;list-style:none;padding-left:0px;">
+                <li>AI 채팅 기능</li>
+            </ul>
+            <ul style="float: right;list-style:none;padding-left:0px;">
+                <li style="font-size: 18px;">
+                    파파고 한영 번역
+                    <label class="switch">
+                        <input type="checkbox" onchange="tranLanguage()" checked>
+                        <span class="slider round"></span>
+                    </label>
+                </li>
+            </ul>
+        </div>
+
+
+
     </div>
     <div class="middle">
         <div class="voldemort" id="AIChatArea">
@@ -333,8 +439,8 @@
     </div>
     <div class="bottom-bar">
         <div class="chat">
-    <input placeholder="Type message.." id="input">
-    <button type="hidden" id="send"></button>
+            <input placeholder="Type message.." id="input">
+            <button type="hidden" id="send"></button>
         </div>
     </div>
 </div>
@@ -360,11 +466,30 @@
 <!-- MAIN JS -->
 <script src="js/main.js"></script>
 
+<script src="js/modal.js"></script>
+
 </body>
 <!--<script src="https://code.jquery.com/jquery-3.6.3.js" integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM="-->
 <!--        crossorigin="anonymous"></script>-->
 
+<script>
+    let tran = 1;
+
+    // 한영 번역 여부
+    function tranLanguage(){
+        if(tran==1){
+            tran=0;
+        }else{
+            tran=1;
+        }
+    }
+</script>
+
 <script type="module">
+
+
+
+
     import {Configuration, OpenAIApi} from 'https://cdn.skypack.dev/openai';
 
     document.querySelector('#send').addEventListener('click', function () {
@@ -376,6 +501,9 @@
         }
     });
 
+    let incomingcount = 1;
+    let outgoingcount = 0;
+
     // 채팅 api
     function aichat() {
         // 내용 채우고 지워주기
@@ -384,12 +512,18 @@
 
         let template = "<div class='outgoing'><span class='bubble'>" + content + "</span></div>";
         $("#AIChatArea").append(template);
+        $(".outgoing")[outgoingcount].scrollIntoView();
+        outgoingcount++;
 
         // 번역
-        content = translate("ko","en",content);
+        if(tran==1){
+            console.log("번역한다.")
+            content = translate("ko", "en", content);
+        }
+
 
         const configuration = new Configuration({
-            apiKey: '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',
+            apiKey: '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',
         });
         const openai = new OpenAIApi(configuration);
 
@@ -405,19 +539,27 @@
             //console.log(result.data.choices[0].text);
 
             // 재 번역
-            content = translate("en","ko",result.data.choices[0].text);
+            if(tran==1){
+                console.log("답변번역 실행");
+                content = translate("en", "ko", result.data.choices[0].text);
+            }else{
+                content = result.data.choices[0].text;
+            }
 
 
-            let template = "<div class='incoming'><span class='bubble'>"+content+"</span></div>";
+
+            let template = "<div class='incoming'><span class='bubble'>" + content + "</span></div>";
             $("#AIChatArea").append(template);
+            $(".incoming")[incomingcount].scrollIntoView();
+            incomingcount++;
         })
     }
 </script>
 <script>
 
     // 파파고 번역
-    function translate(source,target,content){
-        let result2 ="에러입니다.";
+    function translate(source, target, content) {
+        let result2 = "에러입니다.";
         $.ajax({
             type: "POST",
             url: "papago",

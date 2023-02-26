@@ -17,6 +17,9 @@ public class LoginDTO {
     private int autChat; // 관리자 문의 관련 권한
     private int autAMail; // 이메일 전송 관련 권한
     private int autCategory; // 카테고리 생성 관련 권한
+    private int memPoint;   // 회원 포인트
+    private String memGrade;    // 회원 등급
+    private String memPayGrade; // 멤버쉽 등급
 
 
 }

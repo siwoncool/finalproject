@@ -77,6 +77,7 @@ public class BoardController {
                                 @RequestParam(value = "limit", required = false, defaultValue = "5") int limit
     ){
         System.out.println(workCode);
+
         mav = bsvc.WOR4(workCode,page,limit);
 
         return mav;

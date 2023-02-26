@@ -16,6 +16,9 @@
 
     <link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500,700" rel="stylesheet">
 
+    <script src="https://kit.fontawesome.com/8591377d67.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://kit.fontawesome.com/8591377d67.css" crossorigin="anonymous">
+
     <!-- Animate.css -->
     <link rel="stylesheet" href="css/main/animate.css">
     <!-- Icomoon Icon Fonts-->
@@ -83,6 +86,22 @@
 
     </style>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap');
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+    <style>
+        h1, h2, h3, h4, h5, h6, span, p, a, label, input, textarea, button {
+            font-family: 'Gowun Dodum', sans-serif !important;
+            font-size: large !important;
+            letter-spacing: 0rem; !important;
+        }
+    </style>
+
+    <link rel="stylesheet" href="css/modal.css">
+
 </head>
 <style th:replace="mouse.html :: style"></style>
 <body>
@@ -124,14 +143,14 @@
                                      alt="" width="250px" height="250px">
                                 <div class="ci-text">
                                     <h4>[[${list.memName}]]</h4>
-                                    <p>태그 : [[${list.workTag}]]</p>
-                                    <p>총 좋아요 수 : [[${list.likeNum}]]</p>
-                                    <p>총 댓글 갯수 : [[${list.comentNum}]]</p>
-                                    <p>총 조회수 수 : [[${list.HitNum}]]</p>
-                                    <p>총 게시글 수 : [[${list.BoardNum}]]</p>
+                                    <p><span style="display: flex" th:text="${list.workTag}" class="reTag"></span></p>
+                                    <p>💓 : [[${list.likeNum}]]</p>
+                                    <p>💬 : [[${list.comentNum}]]</p>
+                                    <p>👤 : [[${list.HitNum}]]</p>
+                                    <p>📒 : [[${list.BoardNum}]]</p>
                                 </div>
-                                <a th:href="@{WOR4(workCode=${list.workCode})}" class="ci-link"><i
-                                        class="fa fa-play"></i></a>
+                                <a th:href="@{WOR4(workCode=${list.workCode})}" class="ci-link">
+                                    <i class="fa fa-play"></i></a>
                             </div>
                         </div>
                     </div>
@@ -164,7 +183,7 @@
                     </li>
                     &nbsp;
                     <!-- [페이지 번호] 페이지에 대한 처리 -->
-                    <li th:each="i : ${#numbers.sequence(paging.startpage, paging.endpage)}" class="active"
+<!--                    <li th:each="i : ${#numbers.sequence(paging.startpage, paging.endpage)}" class="active"
                         style="background-color: #FFC300">
                         <a th:if="${paging.page == i}">
                             [[${i}]]
@@ -173,11 +192,22 @@
                         <a th:unless="${paging.page == i}">
                             <span th:href="@{MUS004(page=${i} , limit=${paging.limit} , category=${paging.category} , cateCode = ${paging.cateCode} ,orderby=${paging.orderby})}">[[${i}]]</span>
                         </a>
+                    </li>-->
+                    <li th:each="i : ${#numbers.sequence(paging.startpage, paging.endpage)}" class="active"
+                        style="background-color: #FFC300">
+                        <a th:href="@{MUS004(page=${i} , limit=${paging.limit} , category=${paging.category} , cateCode = ${paging.cateCode} ,orderby=${paging.orderby})}">
+                        <span th:if="${paging.page == i}">
+                            [[${i}]]
+                        </span>
+
+                        <span th:unless="${paging.page == i}">
+                            [[${i}]]</span>
+                        </a>
                     </li>
                     <!-- [다음] 페이지에 대한 처리 -->&nbsp;
                     <li th:if="${paging.page >= paging.maxpage}"><a>&raquo;</a></li>
                     <li th:if="${paging.page < paging.maxpage}">
-                        <a th:href="@{MUS004(page=${paging.page +1}, limit=${paging.limit} , category=${paging.category} , cateCode = ${paging.cateCode} ,orderby=${paging.orderby} )}">&raquo;</a>
+                        <a th:href="@{MUS004(page=${paging.page +1}, limit=${paging.limit} , category=${paging.category} , cateCode = ${paging.cateCode} ,orderby=${paging.orderby})}">&raquo;</a>
                     </li>
                 </ul>
 
@@ -198,6 +228,9 @@
         </section>
     </div>
 </div>
+
+<script src="js/modal.js"></script>
+
 <!-- Songs section end -->
 <!--DDAN 서브카테고리 가져오기-->
 <script src="https://code.jquery.com/jquery-3.6.3.js" integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM="
@@ -258,6 +291,19 @@
         let category = "[[${paging.category}]]";
 
         location.href = "MUS004?cateCode=" + cateCode + "&category=" + category + "&orderby=" + order;
+    }
+
+    let retag = $('.reTag');
+
+    for (let i = 0; i <   retag.length; i++) {
+        let tagArr = $(retag[i]).text().split(",")
+        let input = "";
+
+        for ( j in tagArr){
+            //console.log(tagArr[j]);
+            input += "<a href='UnifiedSearch?q="+tagArr[j].replace('#','%23')+"'>"+tagArr[j]+"</a>"+"<br/>";
+        }
+        $(retag[i]).html(input);
     }
 
 </script>

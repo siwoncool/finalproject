@@ -43,7 +43,6 @@ public class BoardService {
     /*워크스페이스 생성*/
     public ModelAndView WOR2(MemWorkSpaceDTO workspace) throws IOException {
         mav =new ModelAndView();
-        System.out.println("왜 지랄인데?");
         System.out.println(workspace);
 
         try {
@@ -57,7 +56,7 @@ public class BoardService {
                 workspace.setWorkImgName("default.jpg");
             }
             /*워크스페이스카테고리 코드 가져오기*/
-            if(workspace.getSubCategory()==null){
+            if(workspace.getSubCategory().equals("자유")){
                 workspace.setWorkCateCode(0);
             }else {
                 int cateCode = bdao.workCateCode(workspace);
@@ -78,9 +77,13 @@ public class BoardService {
 
 
             System.out.println("여기임============"+workspace);
+            if(workspace.getLitMethod() != null){
             if(workspace.getLitMethod().equals("유료화")){
                 /*유로화로 결정할 경우 값 넣어주기*/
                 bdao.litMethod(workspace);
+            } else if (workspace.getLitMethod().equals("무료화")) {
+                bdao.litMethod(workspace);
+            }
             }
 
             if(workspace.getBoaCodeList().size() >= 1) {
@@ -161,7 +164,16 @@ public class BoardService {
 
         if(category.equals("음악")) {
             mav.setViewName("Mus_View.html");
-        }else {
+        }else if(category.equals("문학")){
+            // 문학 정보 가져오기
+            LiteratureDTO literature = bdao.WOR4Lit(workCode);
+            System.out.println("여긴 옴?======================="+literature);
+            if(literature !=null){
+                mav.addObject("literature",literature);
+            }
+            mav.setViewName("WOR_View");
+        }
+        else{
             mav.setViewName("WOR_View");
         }
 
@@ -403,6 +415,7 @@ public class BoardService {
 
 
     public String DRA002(MemBoardDTO board) throws IOException {
+
 
         MultipartFile bFile = board.getBoaFile();
         if(!bFile.isEmpty()){
@@ -727,6 +740,7 @@ public class BoardService {
 
         System.out.println("dao->service :게시물리스트 가져오기"+boardDTOS);
         System.out.println("dao->service :워크스페이스!!!!!! 가져오기"+workSpaceDTOS);
+        mav.addObject("category",category);
         mav.addObject("blist",boardDTOS);
         mav.addObject("wlist",workSpaceDTOS);
         mav.setViewName("Dra_bList");
@@ -999,6 +1013,15 @@ public class BoardService {
     public ModelAndView DRA010(int boaCode) {
         mav=new ModelAndView();
 
+        // 좋아요 삭제
+        bbdao.DRA010_1(boaCode);
+        // 댓글 지우기
+        bbdao.DRA010_2(boaCode);
+        // 상품 삭제
+        bbdao.DRA010_3(boaCode);
+        // 문학테이블 삭제
+        bbdao.DRA010_4(boaCode);
+
         MemBoardDTO board=bbdao.DRA004(boaCode);
         bbdao.DRA011_3(boaCode);
         System.out.println("삭제할 꺼야,, board : ?? "+board);
@@ -1158,6 +1181,10 @@ public class BoardService {
         MemBoardDTO board = bdao.getWorkCodeFormLit(boaCode);
         System.out.println("board ==== "+ board);
 
+        if (board.getBoaWorkcode() == 0){
+            return result=1;
+        }
+
         if(board.getBoaWorkcode()!=0){
             /*워크스페이스 전체 값 가져오기*/
             MemWorkSpaceDTO workspace = bdao.WOR4(board.getBoaWorkcode());
@@ -1178,8 +1205,9 @@ public class BoardService {
 
                 /*순서에 맞는 */
                 MemWorkSpaceDTO workspace2 = bdao.getLitNeedPay(workspace);
+                System.out.println("workspace2===????"+workspace2);
                 if(workspace2!=null){
-                    /*유로화이면서 가격을 내야한다면*/
+                    /*유로화이면서 가격을 내야한다면 지출할 가격을 result에 넣어준다*/
                     result = literature.getLitPrice();
                     /*같은 걸 지출한 내역이 있는지 확인*/
                     System.out.println(literature);
@@ -1188,17 +1216,23 @@ public class BoardService {
 
                     Integer payCode = bdao.getPayCodeLit(literature);
                     System.out.println("payCode ========="+payCode);
+
                     /*결과가 없으면 0이 나옴*/
                     if(payCode !=null){
                         /*결제한 내역이 있다면 무료*/
                         return result=1;
                     } else if (board.getBoaMemcode() == memCode) {
                         return result=1;
+                    } else if (board.getBoaWorkcode() == 0){
+                        return result=1;
                     }
 
-                }else
-                    result=0;
+                }else{
+                     return result=1;
+                }
+                    
 
+                System.out.println("result==========="+result);
                 System.out.println("literature.getLitCount()====="+literature.getLitCount());
                 
             }else {
@@ -1208,7 +1242,7 @@ public class BoardService {
         }else {
             result=0;
         }
-
+        /*result = 0이면 바로 계산, 1이면 가격이 표시된 result일 경우 가격이 나오면서 물어보고 계산*/
         return result;
     }
 
@@ -1225,7 +1259,7 @@ public class BoardService {
         int litCount = literature.getLitPrice();
         /*회원의 소지하는 포인트 가져오기*/
         int memPoint = bdao.getMemPointLit(memCode);
-        int sellPoint = bdao.getSellPointLit(board.getMemCode());
+        int sellPoint = bdao.getSellPointLit(board.getBoaMemcode());
         int memPointafterPay =memPoint - litCount;
         int memPointafterSell = sellPoint + litCount;
         System.out.println("여긴오냐??????????????//"+board.getBoaWorkcode()+"//"+ litCount+"//"+memPoint +"//"+memPointafterPay+"//"+board.getBoaMemcode());
@@ -1243,8 +1277,8 @@ public class BoardService {
             System.out.println(literature);
             /*회원의 포인트를 바꿔준다.*/
             int num = bdao.memPointafterPayLit(literature);
-            System.out.println("여긴오냐?3333333333333333333333");
-            if(num >0){
+            System.out.println("여긴오냐?3333333333333333333333 num ="+num);
+            if(num != 0){
 
                 System.out.println("lit========="+literature);
 
@@ -1265,17 +1299,37 @@ public class BoardService {
     public ModelAndView WOR8(int workCode) {
         mav = new ModelAndView();
 
+        /*문학 삭제*/
+
         /*워크스페이스의 사진과 관련 물품 다 삭제해야함*/
         /*워크스페이스 정보 가져오기*/
         MemWorkSpaceDTO workspace = bdao.WOR4(workCode);
+
         /*게시글 정보 다 불러오기*/
         List<MemBoardDTO> boardList = bdao.tiedbBoard(workCode);
+
+        /*문학 관련 삭제*/
+        if(workspace.getCategory().equals("문학")){
+            bdao.WOR8_Workspace_lit(workCode);
+        }
 
         if(boardList != null){
             for(int i=0;i<boardList.size();i++){
                 System.out.println("i번째"+boardList.get(i));
+                bdao.WOR8_BoardLit(boardList.get(i).getBoaCode());
 
-                int BoardDeleteCheck = bdao.WOR8_Board(boardList.get(i).getBoaCode());
+                // 좋아요 삭제
+                bbdao.DRA010_1(boardList.get(i).getBoaCode());
+                // 댓글 지우기
+                bbdao.DRA010_2(boardList.get(i).getBoaCode());
+                // 상품 삭제
+                bbdao.DRA010_3(boardList.get(i).getBoaCode());
+                /*문학 삭제*/
+                bbdao.DRA010_4(boardList.get(i).getBoaCode());
+                /*히스토리 삭제*/
+                bdao.WOR8_Board(boardList.get(i).getBoaCode());
+                /*찐 게시글 삭제*/
+                int BoardDeleteCheck =bdao.WOR8_BoardDelete(boardList.get(i).getBoaCode());
                 System.out.println("BoardDeleteCheck는???"+BoardDeleteCheck);
                 if(BoardDeleteCheck !=0){
                     fish.fileDelete("PSW/text",boardList.get(i).getBoaContent()+".txt");
@@ -1296,7 +1350,7 @@ public class BoardService {
             }
         }
 
-
+        /*워크스페이스 삭제*/
         int workspaceDeleteCheck = bdao.WOR8_Workspace(workCode);
 
         if(workspaceDeleteCheck>0 && !workspace.getWorkImgName().equals("default.jpg")) {
@@ -1304,12 +1358,16 @@ public class BoardService {
             fish.fileDelete("junho/workSpaceImg", workspace.getWorkImgName());
         }
 
-        if(workspace.getCategory().equals("문학")){
-            bdao.WOR8_Workspace_lit(workCode);
-        }
         mav.setViewName("index");
         return mav;
-    };
+    }
+
+    public int likenum(int boaCode) {
+        int result = bbdao.likenum(boaCode);
+
+        return result;
+    }
+
 }
 
 
